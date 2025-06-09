@@ -295,11 +295,11 @@ public class LevelController : MonoBehaviour {
     public void LoadLevel(LevelModel p_oLevelModel) {
         m_oLevelModel = p_oLevelModel;
 
-        float _fCameraSize = Mathf.Max(m_oLevelModel.size.x + 0.5f, 5.0f);
+        float _fCameraSize = Mathf.Max(m_oLevelModel.size.x + 0.2f, 5.0f);
         CameraController.Instance.SetCameraSize(_fCameraSize);
 
         ClearChild(s_tfTileContainer);
-        s_tfFieldStable.localScale = new Vector3(m_oLevelModel.size.x + 0.1f, m_oLevelModel.size.y + 0.1f, 1.0f);
+        s_tfFieldStable.localScale = new Vector3(m_oLevelModel.size.x + 0.05f, m_oLevelModel.size.y + 0.05f, 1.0f);
         s_tfTileContainer.localPosition = new Vector3((1 - m_oLevelModel.size.x) / 2.0f, (1 - m_oLevelModel.size.y) / 2.0f, 0.0f);
 
         m_arTile = new TileController[m_oLevelModel.size.x, m_oLevelModel.size.y];

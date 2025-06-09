@@ -26,8 +26,8 @@ public class GameSceneController : MonoBehaviour {
     #region Functions
     private void LoadVariables() {
         m_fTileStartSpeed = 0.0f;
-        m_fTileAcceleration = 50.0f;
-        m_fTileMaxSpeed = 30.0f;
+        m_fTileAcceleration = 40.0f;
+        m_fTileMaxSpeed = 20.0f;
     }
 
     private void Start() {
@@ -57,6 +57,12 @@ public class GameSceneController : MonoBehaviour {
         else {
             UnityEngine.SceneManagement.SceneManager.LoadScene("ToolScene");
         }
+    }
+    #endregion
+
+    #region OnClickButtons
+    public void OnClickButtonSetting() {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyScene");
     }
     #endregion
 

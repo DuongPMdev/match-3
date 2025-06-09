@@ -208,6 +208,8 @@ public class ToolSceneController : MonoBehaviour {
     }
 
     public void OnClickButtonTest() {
+        int _nLevel = int.Parse(s_uiInputFieldLevel.text);
+        PlayerPrefs.SetInt("level", _nLevel);
         UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
     }
     #endregion
