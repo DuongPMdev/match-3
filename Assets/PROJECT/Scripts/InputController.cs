@@ -21,15 +21,14 @@ public class InputController : MonoBehaviour {
 
     #region Functions
     private void Update() {
-#if !UNITY_EDITOR
         if (Input.touchCount > 0) {
             Touch _oTouch = Input.GetTouch(0);
 
-            Ray _oRay = Camera.main.ScreenPointToRay(_oTouch.position);
-            Plane _oPlane = new Plane(Vector3.forward, Vector3.zero);
+            Ray _oRayTouch = Camera.main.ScreenPointToRay(_oTouch.position);
+            Plane _oPlaneTouch = new Plane(Vector3.forward, Vector3.zero);
 
-            if (_oPlane.Raycast(_oRay, out float _fDistance)) {
-                Vector3 _v3WorldPoint = _oRay.GetPoint(_fDistance);
+            if (_oPlaneTouch.Raycast(_oRayTouch, out float _fDistanceTouch)) {
+                Vector3 _v3WorldPoint = _oRayTouch.GetPoint(_fDistanceTouch);
                 if (_oTouch.phase == TouchPhase.Began) {
                     m_aOnPointerDown?.Invoke(_v3WorldPoint);
                     m_v3LastWorldPoint = _v3WorldPoint;
@@ -45,12 +44,12 @@ public class InputController : MonoBehaviour {
                 }
             }
         }
-#else
-        Ray _oRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Plane _oPlane = new Plane(Vector3.forward, Vector3.zero);
 
-        if (_oPlane.Raycast(_oRay, out float _fDistance)) {
-            Vector3 _v3WorldPoint = _oRay.GetPoint(_fDistance);
+        Ray _oRayMouse = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane _oPlaneMouse = new Plane(Vector3.forward, Vector3.zero);
+
+        if (_oPlaneMouse.Raycast(_oRayMouse, out float _fDistanceMouse)) {
+            Vector3 _v3WorldPoint = _oRayMouse.GetPoint(_fDistanceMouse);
             if (Input.GetMouseButtonDown(0) == true) {
                 m_aOnPointerDown?.Invoke(_v3WorldPoint);
                 m_v3LastWorldPoint = _v3WorldPoint;
@@ -65,7 +64,6 @@ public class InputController : MonoBehaviour {
                 }
             }
         }
-#endif
     }
 
     public void SetOnPointerDown(Action<Vector3> p_aOnPointerDown) {

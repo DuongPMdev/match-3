@@ -14,6 +14,18 @@ public class TilePair {
 
 }
 
+public class CreatingItem {
+
+    public TileController g_oTile;
+    public ItemModel g_oItem;
+
+    public CreatingItem(TileController p_oTile, ItemModel p_oItem) {
+        g_oTile = p_oTile;
+        g_oItem = p_oItem;
+    }
+
+}
+
 public class LevelController : MonoBehaviour {
 
     #region Singleton
@@ -45,6 +57,7 @@ public class LevelController : MonoBehaviour {
     private TileController[,] m_arTile;
     private TileController m_oSelectedTile;
     private TilePair m_oSwapingTilePair;
+    private List<CreatingItem> m_lCreatingItem;
 
     private bool m_bMainHandleThread;
     private bool m_bIsUsingBoosterHammer;
@@ -52,6 +65,8 @@ public class LevelController : MonoBehaviour {
     private int m_nNumberMovingItem;
     private int m_nNumberMovingPiece;
     private int m_nNumberCollectingPiece;
+    private int m_nNumberCreatingItem;
+    private int m_nNumberActivingItem;
 
     private enum STATE {
         IDLE,
@@ -60,19 +75,24 @@ public class LevelController : MonoBehaviour {
         BOOSTER,
         MOVE,
         MATCH,
-        COLLECT
+        COLLECT,
+        CREATE_ITEM
     }
     private STATE m_oState;
     #endregion
 
     #region Functions
     private void LoadVariables() {
+        m_lCreatingItem = new List<CreatingItem>();
+
         m_bMainHandleThread = false;
         m_bIsUsingBoosterHammer = false;
         m_nNumberMovingObstacle = 0;
         m_nNumberMovingItem = 0;
         m_nNumberMovingPiece = 0;
         m_nNumberCollectingPiece = 0;
+        m_nNumberCreatingItem = 0;
+        m_nNumberActivingItem = 0;
 
         m_oState = STATE.IDLE;
     }
@@ -107,7 +127,7 @@ public class LevelController : MonoBehaviour {
             }
         }
         else if (m_oState == STATE.BOOSTER) {
-            if (IsCollecting() == false) {
+            if (IsCollectingPiece() == false) {
                 m_oState = STATE.MOVE;
             }
         }
@@ -139,15 +159,13 @@ public class LevelController : MonoBehaviour {
             }
         }
         else if (m_oState == STATE.MATCH) {
-            ResetSpeed();
             List<List<TileController>> _lListMatch = GetAllMergedMatch();
+            for (int i = 0; i < _lListMatch.Count; i++) {
+                List<TileController> _lMatch = _lListMatch[i];
+                CollectMatch(_lMatch);
+            }
+            ResetSpeed();
             if (_lListMatch.Count > 0) {
-                for (int i = 0; i < _lListMatch.Count; i++) {
-                    List<TileController> _lMatch = _lListMatch[i];
-                    for (int ii = 0; ii < _lMatch.Count; ii++) {
-                        _lMatch[ii].TakeDamage(1);
-                    }
-                }
                 m_oState = STATE.COLLECT;
             }
             else {
@@ -155,9 +173,96 @@ public class LevelController : MonoBehaviour {
             }
         }
         else if (m_oState == STATE.COLLECT) {
-            if (IsCollecting() == false) {
+            if (IsCollectingPiece() == false && IsActivingItem() == false) {
+                if (m_lCreatingItem.Count > 0) {
+                    for (int i = 0; i < m_lCreatingItem.Count; i++) {
+                        CreatingItem _oCreatingItem = m_lCreatingItem[i];
+                        _oCreatingItem.g_oTile.CreateItemModel(_oCreatingItem.g_oItem);
+                    }
+                    m_lCreatingItem.Clear();
+                    m_oState = STATE.CREATE_ITEM;
+                }
+                else {
+                    m_oState = STATE.MOVE;
+                }
+            }
+        }
+        else if (m_oState == STATE.CREATE_ITEM) {
+            if (IsCollectingPiece() == false) {
                 m_oState = STATE.MOVE;
             }
+        }
+    }
+
+    private void CollectMatch(List<TileController> p_lMatch) {
+        if (p_lMatch.Count > 3) {
+            TileController _oMaxCurrentSpeed = GetMaxCurrentSpeed(p_lMatch);
+            string _sCreatingItemType = GetCreatingItemType(p_lMatch);
+            m_lCreatingItem.Add(new CreatingItem(_oMaxCurrentSpeed, new ItemModel(_oMaxCurrentSpeed.GetPosition(), _oMaxCurrentSpeed.GetPieceValue(), _sCreatingItemType)));
+        }
+        for (int i = 0; i < p_lMatch.Count; i++) {
+            p_lMatch[i].Match();
+        }
+    }
+
+    private TileController GetMaxCurrentSpeed(List<TileController> p_lMatch) {
+        float _fMaxCurrentSpeed = p_lMatch[0].GetCurrentSpeed();
+        TileController _oMaxCurrentSpeed = p_lMatch[0];
+        for (int i = 0; i < p_lMatch.Count; i++) {
+            if (p_lMatch[i].GetCurrentSpeed() > _fMaxCurrentSpeed) {
+                _oMaxCurrentSpeed = p_lMatch[i];
+            }
+        }
+        return _oMaxCurrentSpeed;
+    }
+
+    private string GetCreatingItemType(List<TileController> p_lMatch) {
+        Dictionary<int, int> _dRowCounts = new Dictionary<int, int>();
+        Dictionary<int, int> _dColumnCounts = new Dictionary<int, int>();
+        
+        for (int i = 0; i < p_lMatch.Count; i++) {
+            if (_dRowCounts.ContainsKey(p_lMatch[i].GetPosition().y)) {
+                _dRowCounts[p_lMatch[i].GetPosition().y]++;
+            }
+            else {
+                _dRowCounts[p_lMatch[i].GetPosition().y] = 1;
+            }
+
+
+            if (_dColumnCounts.ContainsKey(p_lMatch[i].GetPosition().x)) {
+                _dColumnCounts[p_lMatch[i].GetPosition().x]++;
+            }
+            else {
+                _dColumnCounts[p_lMatch[i].GetPosition().x] = 1;
+            }
+        }
+
+        int _nSameRowCount = 0;
+        int _nSameColumnCount = 0;
+
+        foreach (var _oPair in _dRowCounts) {
+            if (_oPair.Value > 1) {
+                _nSameRowCount += _oPair.Value;
+            }
+        }
+
+        foreach (var _oPair in _dColumnCounts) {
+            if (_oPair.Value > 1) {
+                _nSameColumnCount += _oPair.Value;
+            }
+        }
+
+        if (_nSameRowCount >= 5 || _nSameColumnCount >= 5) {
+            return "rainbow";
+        }
+        else if (_nSameRowCount == 0) {
+            return "clear_column";
+        }
+        else if (_nSameColumnCount == 0) {
+            return "clear_row";
+        }
+        else {
+            return "bomb";
         }
     }
 
@@ -200,6 +305,22 @@ public class LevelController : MonoBehaviour {
 
     public void OnCollectPieceDone() {
         m_nNumberCollectingPiece--;
+    }
+
+    public void OnCreateItemStart() {
+        m_nNumberCreatingItem++;
+    }
+
+    public void OnCreateItemDone() {
+        m_nNumberCreatingItem--;
+    }
+
+    public void OnActiveItemStart() {
+        m_nNumberActivingItem++;
+    }
+
+    public void OnActiveItemDone() {
+        m_nNumberActivingItem--;
     }
 
     private void OnPointerDown(Vector3 p_v3PointerPosition) {
@@ -285,8 +406,22 @@ public class LevelController : MonoBehaviour {
         return false;
     }
 
-    public bool IsCollecting() {
+    public bool IsCollectingPiece() {
         if (m_nNumberCollectingPiece > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public bool IsActivingItem() {
+        if (m_nNumberActivingItem > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public bool IsCreating() {
+        if (m_nNumberCreatingItem > 0) {
             return true;
         }
         return false;
@@ -332,6 +467,26 @@ public class LevelController : MonoBehaviour {
             TileController _oTile = GetTileAt(_oObstacleModel.position);
             if (_oTile != null) {
                 _oTile.CreateObstacleModel(_oObstacleModel);
+            }
+        }
+    }
+
+    public void ActiveItem(ItemModel p_oItemModel) {
+        Vector2Int _v2iPosition = p_oItemModel.position;
+        if (p_oItemModel.type.Equals("clear_row") == true) {
+            for (int x = 0; x < m_oLevelModel.size.x; x++) {
+                TileController _oTile = GetTileAt(new Vector2Int(x, _v2iPosition.y));
+                if (_oTile != null) {
+                    _oTile.TakeDamage(1);
+                }
+            }
+        }
+        else if (p_oItemModel.type.Equals("clear_column") == true) {
+            for (int y = 0; y < m_oLevelModel.size.y; y++) {
+                TileController _oTile = GetTileAt(new Vector2Int(_v2iPosition.x, y));
+                if (_oTile != null) {
+                    _oTile.TakeDamage(1);
+                }
             }
         }
     }

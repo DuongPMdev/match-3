@@ -42,11 +42,16 @@ public class PieceModel {
 public class ItemModel {
 
     public Vector2Int position;
+    public int piece;
     public string type;
 
-    public ItemModel(Vector2Int p_v2iPosition, string p_sType) {
+    public ItemModel(Vector2Int p_v2iPosition, int p_nPiece, string p_sType) {
         position = p_v2iPosition;
+        piece = p_nPiece;
         type = p_sType;
+        if (type.Equals("rainbow") == true) {
+            piece = 0;
+        }
     }
 
 }

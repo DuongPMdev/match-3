@@ -7,7 +7,9 @@ public class ItemController : MonoBehaviour {
     #region Views
     [Header("Views")]
     [SerializeField]
-    private SpriteRenderer s_oSpriteRenderer;
+    private SpriteRenderer s_oPiece;
+    [SerializeField]
+    private SpriteRenderer s_oItem;
     #endregion
 
     #region Variables
@@ -33,10 +35,38 @@ public class ItemController : MonoBehaviour {
 
     public void SetItemModel(ItemModel p_oItemModel) {
         m_oItemModel = p_oItemModel;
+
+        Sprite _oPieceSprite = ThemeController.Instance.GetPieceSprite(p_oItemModel.piece);
+        s_oPiece.sprite = _oPieceSprite;
+
+        Sprite _oItemSprite = ThemeController.Instance.GetItemSprite(p_oItemModel.type);
+        s_oItem.sprite = _oItemSprite;
+
+        StartCoroutine(SpawnIE());
+    }
+
+    public ItemModel GetItemModel() {
+        return m_oItemModel;
+    }
+
+    private IEnumerator SpawnIE() {
+        LevelController.Instance.OnCreateItemStart();
+
+        float _fDuration = 0.2f;
+        float _fElapsedTime = 0.0f;
+        while (_fElapsedTime < _fDuration) {
+            float _fProceed = _fElapsedTime / _fDuration;
+            transform.localScale = Vector3.one * _fProceed;
+
+            _fElapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        LevelController.Instance.OnCreateItemDone();
     }
 
     public void SetTile(TileController p_oTile) {
         m_oTile = p_oTile;
+        m_oItemModel.position = m_oTile.GetPosition();
         if (transform.localPosition.magnitude > 0.1f) {
             StartCoroutine(MoveToZeroLocalPositionIE());
         }
@@ -86,7 +116,16 @@ public class ItemController : MonoBehaviour {
     }
 
     public void Active() {
+        StartCoroutine(ActiveIE());
+    }
 
+    private IEnumerator ActiveIE() {
+        LevelController.Instance.OnActiveItemStart();
+        m_oTile.RemoveItem();
+        LevelController.Instance.ActiveItem(m_oItemModel);
+        yield return new WaitForSeconds(1.0f);
+        Destroy(gameObject);
+        LevelController.Instance.OnActiveItemDone();
     }
     #endregion
 

@@ -44,6 +44,7 @@ public class PieceController : MonoBehaviour {
 
     public void SetTile(TileController p_oTile) {
         m_oTile = p_oTile;
+        m_oPieceModel.position = m_oTile.GetPosition();
         if (transform.localPosition.magnitude > 0.1f) {
             StartCoroutine(MoveToZeroLocalPositionIE());
         }

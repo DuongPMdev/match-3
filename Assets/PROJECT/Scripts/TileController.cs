@@ -42,6 +42,16 @@ public class TileController : MonoBehaviour {
         return m_v2iPosition;
     }
 
+    public int GetPieceValue() {
+        if (m_oPiece != null) {
+            return m_oPiece.GetPieceModel().piece;
+        }
+        if (m_oItem != null) {
+            return m_oItem.GetItemModel().piece;
+        }
+        return -1;
+    }
+
     public void CreatePieceModel(PieceModel p_oPieceModel, bool p_bUpper = false) {
         GameObject _goPiece = Instantiate(s_goPrefabPiece, s_tfPieceContainer.position, Quaternion.identity, s_tfPieceContainer);
         if (p_bUpper == true) {
@@ -150,14 +160,25 @@ public class TileController : MonoBehaviour {
     }
 
     public bool IsMatch(TileController p_oTile) {
-        if (m_oPiece == null) {
-            return false;
+        if (m_oPiece != null && p_oTile.GetPiece() != null) {
+            if (m_oPiece.GetPieceModel().piece == p_oTile.GetPiece().GetPieceModel().piece) {
+                return true;
+            }
         }
-        if (p_oTile.GetPiece() == null) {
-            return false;
+        if (m_oPiece != null && p_oTile.GetItem() != null) {
+            if (m_oPiece.GetPieceModel().piece == p_oTile.GetItem().GetItemModel().piece) {
+                return true;
+            }
         }
-        if (m_oPiece.GetPieceModel().piece == p_oTile.GetPiece().GetPieceModel().piece) {
-            return true;
+        if (m_oItem != null && p_oTile.GetPiece() != null) {
+            if (m_oItem.GetItemModel().piece == p_oTile.GetPiece().GetPieceModel().piece) {
+                return true;
+            }
+        }
+        if (m_oItem != null && p_oTile.GetItem() != null) {
+            if (m_oItem.GetItemModel().piece == p_oTile.GetItem().GetItemModel().piece) {
+                return true;
+            }
         }
         return false;
     }
@@ -220,6 +241,15 @@ public class TileController : MonoBehaviour {
         return 0.0f;
     }
 
+    public void Match() {
+        if (m_oItem != null) {
+            m_oItem.Active();
+        }
+        if (m_oPiece != null) {
+            m_oPiece.Collect();
+        }
+    }
+
     public void TakeDamage(int p_nDamage) {
         if (m_oObstacle != null) {
             m_oObstacle.TakeDamage(p_nDamage);
@@ -234,6 +264,10 @@ public class TileController : MonoBehaviour {
 
     public void RemovePiece() {
         m_oPiece = null;
+    }
+
+    public void RemoveItem() {
+        m_oItem = null;
     }
 
     public bool IsSamePosition(TileController p_oTile) {
