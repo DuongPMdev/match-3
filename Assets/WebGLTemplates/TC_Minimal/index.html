@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>{{{ PRODUCT_NAME }}}</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <link rel="manifest" href="manifest.webmanifest">
+	<script src="https://telegram.org/js/telegram-web-app.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/TONSolutions/telemetree-pixel@main/telemetree-pixel.js"></script>
+	<!-- <script src="https://unpkg.com/@cuonghx.ngen/cat-battle-ton-sdk@1.1.6"></script> -->
+	<!-- <script src="https://unpkg.com/@cuonghx.ngen/cat-battle-evm-sdk@1.0.0"></script> -->
+	<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+  </head>
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}} tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <!-- <div id="unity-logo"></div> -->
+		<div class="progress-container" data-percentage='0'>
+			<div id="loadingText" style="position: absolute; top: -20px; left: 50%; transform: translate(-50%, -50%); font-size: 16px; color: white;white-space: nowrap;">
+				FIRST LOAD may take longer<span id="dots">.</span>
+			</div>
+		  <div class="progress"></div>
+		</div>
+        <!-- <div id="unity-progress-bar-empty"> -->
+          <!-- <div id="unity-progress-bar-full"></div> -->
+        <!-- </div> -->
+      </div>
+      <div id="unity-warning"> </div>
+    </div>
+	<script> 
+	var version = {{{ JSON.stringify(PRODUCT_VERSION) }}}; // Define the version
+    var script = document.createElement('script');
+    script.src = "index.js?v=" + version; // Append version to the script src
+    document.body.appendChild(script); // Add the script to the body
+	</script>
+    <!-- <script src="index.js?v=" + {{{ JSON.stringify(PRODUCT_VERSION) }}}></script> -->
+    
+	<!-- <script src="load-sdk.js"></script> -->
+	<!-- <script src="tracking.js"></script> -->
+	<script>
+	  const telemetreeBuilder = telemetree({
+		  projectId: "16b7a2e2-d85b-486f-9334-b0f08e8f1664",
+		  apiKey: "e3928651-c938-4432-8109-10b230919675",
+		  appName: "Plays Hub",
+		  isTelegramContext: false, // use false, if a website is not in Telegram Web App context
+	  });
+	</script>
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-PCVJ0R9PRF"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-PCVJ0R9PRF');
+	</script>
+  </body>
+</html>

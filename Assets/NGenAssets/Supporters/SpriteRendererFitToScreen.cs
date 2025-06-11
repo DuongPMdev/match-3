@@ -1,18 +1,20 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class FitSpriteToScreen : MonoBehaviour {
 
     private void Start() {
-        FitToScreen();
+        StartCoroutine(FitToScreenIE());
     }
+    
+    private IEnumerator FitToScreenIE() {
+        yield return new WaitForEndOfFrame();
 
-    private void FitToScreen() {
         SpriteRenderer _oSpriteRenderer = GetComponent<SpriteRenderer>();
 
         if (_oSpriteRenderer == null || _oSpriteRenderer.sprite == null) {
             Debug.LogError("SpriteRenderer or Sprite is missing!");
-            return;
         }
 
         float _fSpriteRendererWidth = _oSpriteRenderer.sprite.bounds.size.x;

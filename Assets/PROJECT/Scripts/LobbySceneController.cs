@@ -13,6 +13,10 @@ public class LobbySceneController : MonoBehaviour {
     #endregion
 
     #region OnClickButtons
+    public void OnClickButtonSetting() {
+        PopupSettingController.Instance.Show();
+    }
+
     public void OnClickButtonPlayLevel(int p_nLevel) {
         PopupLevelInfoController.Instance.Show(p_nLevel);
     }

@@ -17,7 +17,7 @@ public class PieceController : MonoBehaviour {
     private float m_fStartSpeed;
     private float m_fAcceleration;
     private float m_fMaxSpeed;
-    private float m_fCurrentSpeed;
+    public float m_fCurrentSpeed;
 
     private bool m_bIsMoving;
     #endregion

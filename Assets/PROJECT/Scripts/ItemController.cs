@@ -7,9 +7,7 @@ public class ItemController : MonoBehaviour {
     #region Views
     [Header("Views")]
     [SerializeField]
-    private SpriteRenderer s_oPiece;
-    [SerializeField]
-    private SpriteRenderer s_oItem;
+    private SpriteRenderer s_oItemSpriteRenderer;
     #endregion
 
     #region Variables
@@ -19,7 +17,7 @@ public class ItemController : MonoBehaviour {
     private float m_fStartSpeed;
     private float m_fAcceleration;
     private float m_fMaxSpeed;
-    private float m_fCurrentSpeed;
+    public float m_fCurrentSpeed;
 
     private bool m_bIsMoving;
     #endregion
@@ -36,11 +34,8 @@ public class ItemController : MonoBehaviour {
     public void SetItemModel(ItemModel p_oItemModel) {
         m_oItemModel = p_oItemModel;
 
-        Sprite _oPieceSprite = ThemeController.Instance.GetPieceSprite(p_oItemModel.piece);
-        s_oPiece.sprite = _oPieceSprite;
-
-        Sprite _oItemSprite = ThemeController.Instance.GetItemSprite(p_oItemModel.type);
-        s_oItem.sprite = _oItemSprite;
+        Sprite _oItemSprite = ThemeController.Instance.GetItemSprite(p_oItemModel.piece, p_oItemModel.type);
+        s_oItemSpriteRenderer.sprite = _oItemSprite;
 
         StartCoroutine(SpawnIE());
     }
@@ -123,7 +118,7 @@ public class ItemController : MonoBehaviour {
         LevelController.Instance.OnActiveItemStart();
         m_oTile.RemoveItem();
         LevelController.Instance.ActiveItem(m_oItemModel);
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.2f);
         Destroy(gameObject);
         LevelController.Instance.OnActiveItemDone();
     }

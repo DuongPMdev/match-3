@@ -109,12 +109,12 @@ public class LevelController : MonoBehaviour {
         }
         else if (m_oState == STATE.SWAP) {
             if (IsMoving() == false) {
-                ResetSpeed();
                 List<List<TileController>> _lListMatch = GetAllMergedMatch();
                 if (_lListMatch.Count > 0) {
                     m_oState = STATE.MATCH;
                 }
                 else {
+                    ResetSpeed();
                     m_oSwapingTilePair.g_oFirstPair.SwapWith(m_oSwapingTilePair.g_oSecondPair);
                     m_oState = STATE.SWAP_BACK;
                 }
@@ -211,6 +211,7 @@ public class LevelController : MonoBehaviour {
         for (int i = 0; i < p_lMatch.Count; i++) {
             if (p_lMatch[i].GetCurrentSpeed() > _fMaxCurrentSpeed) {
                 _oMaxCurrentSpeed = p_lMatch[i];
+                _fMaxCurrentSpeed = p_lMatch[i].GetCurrentSpeed();
             }
         }
         return _oMaxCurrentSpeed;

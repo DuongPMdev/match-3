@@ -28,6 +28,7 @@ public class PopupLevelInfoController : MonoBehaviour {
     public void Show(int p_nLevel) {
         m_nLevel = p_nLevel;
         LoadUIs();
+        s_oPopupAnimator.gameObject.SetActive(true);
         s_oPopupAnimator.SetBool("bIsShowing", true);
     }
     public void Hide() {
