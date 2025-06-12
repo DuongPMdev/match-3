@@ -10,11 +10,26 @@ public class LobbySceneController : MonoBehaviour {
         Instance = this;
         Application.targetFrameRate = 60;
     }
+
+    public void HideAllPopup() {
+        PopupSettingController.Instance.Hide();
+        PopupProfileController.Instance.Hide();
+        PopupHeartController.Instance.Hide();
+        PopupLevelInfoController.Instance.Hide();
+    }
     #endregion
 
     #region OnClickButtons
     public void OnClickButtonSetting() {
         PopupSettingController.Instance.Show();
+    }
+
+    public void OnClickButtonProfile() {
+        PopupProfileController.Instance.Show();
+    }
+
+    public void OnClickButtonHeart() {
+        PopupHeartController.Instance.Show();
     }
 
     public void OnClickButtonPlayLevel(int p_nLevel) {

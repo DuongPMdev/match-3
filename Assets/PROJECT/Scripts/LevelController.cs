@@ -58,6 +58,7 @@ public class LevelController : MonoBehaviour {
     private TileController m_oSelectedTile;
     private TilePair m_oSwapingTilePair;
     private List<CreatingItem> m_lCreatingItem;
+    private List<ItemController> m_lActivingItem;
 
     private bool m_bMainHandleThread;
     private bool m_bIsUsingBoosterHammer;
@@ -84,6 +85,7 @@ public class LevelController : MonoBehaviour {
     #region Functions
     private void LoadVariables() {
         m_lCreatingItem = new List<CreatingItem>();
+        m_lActivingItem = new List<ItemController>();
 
         m_bMainHandleThread = false;
         m_bIsUsingBoosterHammer = false;
@@ -159,13 +161,14 @@ public class LevelController : MonoBehaviour {
             }
         }
         else if (m_oState == STATE.MATCH) {
+            bool _bIsActived = CheckActivingItem();
             List<List<TileController>> _lListMatch = GetAllMergedMatch();
             for (int i = 0; i < _lListMatch.Count; i++) {
                 List<TileController> _lMatch = _lListMatch[i];
                 CollectMatch(_lMatch);
             }
             ResetSpeed();
-            if (_lListMatch.Count > 0) {
+            if (_bIsActived == true || _lListMatch.Count > 0) {
                 m_oState = STATE.COLLECT;
             }
             else {
@@ -209,9 +212,11 @@ public class LevelController : MonoBehaviour {
         float _fMaxCurrentSpeed = p_lMatch[0].GetCurrentSpeed();
         TileController _oMaxCurrentSpeed = p_lMatch[0];
         for (int i = 0; i < p_lMatch.Count; i++) {
-            if (p_lMatch[i].GetCurrentSpeed() > _fMaxCurrentSpeed) {
-                _oMaxCurrentSpeed = p_lMatch[i];
-                _fMaxCurrentSpeed = p_lMatch[i].GetCurrentSpeed();
+            if (p_lMatch[i].GetPieceValue() > 0) {
+                if (p_lMatch[i].GetCurrentSpeed() > _fMaxCurrentSpeed) {
+                    _oMaxCurrentSpeed = p_lMatch[i];
+                    _fMaxCurrentSpeed = p_lMatch[i].GetCurrentSpeed();
+                }
             }
         }
         return _oMaxCurrentSpeed;
@@ -339,17 +344,19 @@ public class LevelController : MonoBehaviour {
                 m_oSelectedTile = _oTile;
             }
             else {
-                if (_oTile.IsSamePosition(m_oSelectedTile) == false) {
+                if (_oTile.IsNextTo(m_oSelectedTile) == true) {
                     _oTile.SwapWith(m_oSelectedTile);
                     m_oSwapingTilePair = new TilePair(_oTile, m_oSelectedTile);
                     m_oState = STATE.SWAP;
                     m_oSelectedTile = null;
                 }
                 else {
-                    if (true) {
-                        if (m_oSelectedTile.IsSamePosition(_oTile) == true) {
-                            UseBoosterHammer(_oTile);
-                            m_oSelectedTile = null;
+                    if (_oTile.IsSamePosition(m_oSelectedTile) == true) {
+                        if (true) {
+                            if (m_oSelectedTile.IsSamePosition(_oTile) == true) {
+                                UseBoosterHammer(_oTile);
+                                m_oSelectedTile = null;
+                            }
                         }
                     }
                 }
@@ -378,7 +385,7 @@ public class LevelController : MonoBehaviour {
             if (_oTile.IsMoveable() == false) {
                 return;
             }
-            if (_oTile.IsSamePosition(m_oSelectedTile) == false) {
+            if (_oTile.IsNextTo(m_oSelectedTile) == true) {
                 _oTile.SwapWith(m_oSelectedTile);
                 m_oSwapingTilePair = new TilePair(_oTile, m_oSelectedTile);
                 m_oState = STATE.SWAP;
@@ -472,24 +479,110 @@ public class LevelController : MonoBehaviour {
         }
     }
 
+    private bool CheckActivingItem() {
+        bool _bIsActived = false;
+        for (int i = 0; i < m_lActivingItem.Count; i++) {
+            m_lActivingItem[i].Active();
+            _bIsActived = true;
+        }
+        m_lActivingItem.Clear();
+        return _bIsActived;
+    }
+
     public void ActiveItem(ItemModel p_oItemModel) {
         Vector2Int _v2iPosition = p_oItemModel.position;
         if (p_oItemModel.type.Equals("clear_row") == true) {
-            for (int x = 0; x < m_oLevelModel.size.x; x++) {
-                TileController _oTile = GetTileAt(new Vector2Int(x, _v2iPosition.y));
-                if (_oTile != null) {
-                    _oTile.TakeDamage(1);
-                }
-            }
+            StartCoroutine(ActiveItemClearRowIE(_v2iPosition));
         }
         else if (p_oItemModel.type.Equals("clear_column") == true) {
-            for (int y = 0; y < m_oLevelModel.size.y; y++) {
-                TileController _oTile = GetTileAt(new Vector2Int(_v2iPosition.x, y));
-                if (_oTile != null) {
-                    _oTile.TakeDamage(1);
+            StartCoroutine(ActiveItemClearColumnIE(_v2iPosition));
+        }
+        else if (p_oItemModel.type.Equals("bomb") == true) {
+            if (GetTileAt(_v2iPosition).GetItem() != null) {
+                m_lActivingItem.Add(GetTileAt(_v2iPosition).GetItem());
+            }
+            StartCoroutine(ActiveItemBombIE(_v2iPosition));
+        }
+    }
+
+    private IEnumerator ActiveItemClearRowIE(Vector2Int p_v2iPosition) {
+        OnActiveItemStart();
+        bool _bIsDone = false;
+        int _nOffset = 1;
+        while (_bIsDone == false) {
+            Vector2Int _v2iLeft = new Vector2Int(p_v2iPosition.x - _nOffset, p_v2iPosition.y);
+            Vector2Int _v2iRight = new Vector2Int(p_v2iPosition.x + _nOffset, p_v2iPosition.y);
+
+            TileController _oTileLeft = GetTileAt(_v2iLeft);
+            TileController _oTileRight = GetTileAt(_v2iRight);
+
+            if (_oTileLeft == null && _oTileRight == null) {
+                _bIsDone = true;
+            }
+            else {
+                if (_oTileLeft != null) {
+                    _oTileLeft.TakeDamage(1);
                 }
+                if (_oTileRight != null) {
+                    _oTileRight.TakeDamage(1);
+                }
+                _nOffset++;
+            }
+            yield return new WaitForSeconds(0.05f);
+        }
+        OnActiveItemDone();
+    }
+
+    private IEnumerator ActiveItemClearColumnIE(Vector2Int p_v2iPosition) {
+        OnActiveItemStart();
+        bool _bIsDone = false;
+        int _nOffset = 1;
+        while (_bIsDone == false) {
+            Vector2Int _v2iUp = new Vector2Int(p_v2iPosition.x, p_v2iPosition.y - _nOffset);
+            Vector2Int _v2iDown = new Vector2Int(p_v2iPosition.x, p_v2iPosition.y + _nOffset);
+
+            TileController _oTileUp = GetTileAt(_v2iUp);
+            TileController _oTileDown = GetTileAt(_v2iDown);
+
+            if (_oTileDown == null && _oTileDown == null) {
+                _bIsDone = true;
+            }
+            else {
+                if (_oTileUp != null) {
+                    _oTileUp.TakeDamage(1);
+                }
+                if (_oTileDown != null) {
+                    _oTileDown.TakeDamage(1);
+                }
+                _nOffset++;
+            }
+            yield return new WaitForSeconds(0.05f);
+        }
+        OnActiveItemDone();
+    }
+
+    private IEnumerator ActiveItemBombIE(Vector2Int p_v2iPosition) {
+        OnActiveItemStart();
+        List<Vector2Int> _lOffset = new List<Vector2Int>() {
+            Vector2Int.up,
+            Vector2Int.down,
+            Vector2Int.left,
+            Vector2Int.right,
+            new Vector2Int(1, 1),
+            new Vector2Int(-1, 1),
+            new Vector2Int(1, -1),
+            new Vector2Int(-1, -1),
+        };
+        for (int i = 0; i < _lOffset.Count; i++) {
+            Vector2Int _v2iPosition = p_v2iPosition + _lOffset[i];
+            TileController _oTile = GetTileAt(_v2iPosition);
+
+            if (_oTile != null) {
+                _oTile.TakeDamage(1);
             }
         }
+        yield return new WaitForSeconds(0.1f);
+        OnActiveItemDone();
     }
 
     private void UseBoosterHammer(TileController p_oTile) {

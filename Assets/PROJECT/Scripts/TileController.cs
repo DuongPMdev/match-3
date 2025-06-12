@@ -13,6 +13,8 @@ public class TileController : MonoBehaviour {
     private GameObject s_goPrefabItem;
     [SerializeField]
     private GameObject s_goPrefabObstacle;
+    [SerializeField]
+    private GameObject s_goPrefabTakeDamageVFX;
     #endregion
 
     #region Views
@@ -23,6 +25,8 @@ public class TileController : MonoBehaviour {
     private Transform s_tfItemContainer;
     [SerializeField]
     private Transform s_tfObstacleContainer;
+    [SerializeField]
+    private Transform s_tfVFXContainer;
     #endregion
 
     #region Variables
@@ -251,6 +255,9 @@ public class TileController : MonoBehaviour {
     }
 
     public void TakeDamage(int p_nDamage) {
+        GameObject _goTakeDamageVFX = Instantiate(s_goPrefabTakeDamageVFX, s_tfVFXContainer.position, Quaternion.identity, s_tfVFXContainer);
+        Destroy(_goTakeDamageVFX, 0.3f);
+
         if (m_oObstacle != null) {
             m_oObstacle.TakeDamage(p_nDamage);
         }

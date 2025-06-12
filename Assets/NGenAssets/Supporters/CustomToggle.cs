@@ -13,11 +13,16 @@ public class CustomToggle : MonoBehaviour {
 
     #region Variables
     private Action m_oOnTurn;
+    private bool m_bIsOn;
     #endregion
 
     #region Functions
+    private void Update() {
+        s_oAnimator.SetBool("bIsOn", m_bIsOn);
+    }
+
     public void SetValue(bool p_bIsOn) {
-        s_oAnimator.SetBool("bIsOn", p_bIsOn);
+        m_bIsOn = p_bIsOn;
     }
 
     public void SetOnTurn(Action p_oOnTurn) {

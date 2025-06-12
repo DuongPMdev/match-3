@@ -20,6 +20,8 @@ public class ItemController : MonoBehaviour {
     public float m_fCurrentSpeed;
 
     private bool m_bIsMoving;
+
+    private int m_nActivedTime;
     #endregion
 
     #region Functions
@@ -29,6 +31,7 @@ public class ItemController : MonoBehaviour {
         m_fMaxSpeed = GameSceneController.Instance.GetTileMaxSpeed();
         m_fCurrentSpeed = m_fStartSpeed;
         m_bIsMoving = false;
+        m_nActivedTime = 0;
     }
 
     public void SetItemModel(ItemModel p_oItemModel) {
@@ -111,16 +114,18 @@ public class ItemController : MonoBehaviour {
     }
 
     public void Active() {
-        StartCoroutine(ActiveIE());
-    }
-
-    private IEnumerator ActiveIE() {
-        LevelController.Instance.OnActiveItemStart();
-        m_oTile.RemoveItem();
         LevelController.Instance.ActiveItem(m_oItemModel);
-        yield return new WaitForSeconds(0.2f);
-        Destroy(gameObject);
-        LevelController.Instance.OnActiveItemDone();
+        if (m_oItemModel.type.Equals("bomb") == true) {
+            if (m_nActivedTime > 0) {
+                m_oTile.RemoveItem();
+                Destroy(gameObject);
+            }
+        }
+        else {
+            m_oTile.RemoveItem();
+            Destroy(gameObject);
+        }
+        m_nActivedTime++;
     }
     #endregion
 

@@ -34,6 +34,7 @@ Transform:
   - {fileID: 1020023963584681651}
   - {fileID: 8878005654408512112}
   - {fileID: 4650748092840826865}
+  - {fileID: 7772459642544524547}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7898806768500130830
@@ -51,9 +52,11 @@ MonoBehaviour:
   s_goPrefabPiece: {fileID: 3688661052297697205, guid: 2c8eba5921c60e446826ac6c7984e563, type: 3}
   s_goPrefabItem: {fileID: 3688661052297697205, guid: 4aed639f9f5df4240b7e9a876ed246ae, type: 3}
   s_goPrefabObstacle: {fileID: 3688661052297697205, guid: c9211c1e3f7679148b9b16efc49759aa, type: 3}
+  s_goPrefabTakeDamageVFX: {fileID: 1557492176657030550, guid: 5b49aba075c92254ab1f0062b43fbdfb, type: 3}
   s_tfPieceContainer: {fileID: 1020023963584681651}
   s_tfItemContainer: {fileID: 8878005654408512112}
   s_tfObstacleContainer: {fileID: 4650748092840826865}
+  s_tfVFXContainer: {fileID: 7772459642544524547}
 --- !u!1 &3160933180124214227
 GameObject:
   m_ObjectHideFlags: 0
@@ -223,6 +226,37 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7172335314051651308}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2612587857178364512}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8188859852472189559
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7772459642544524547}
+  m_Layer: 0
+  m_Name: VFXContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7772459642544524547
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188859852472189559}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
