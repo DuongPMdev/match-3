@@ -17,6 +17,7 @@ public class InputController : MonoBehaviour {
     private Action<Vector3> m_aOnDrag;
     private Action<Vector3> m_aOnPointerUp;
     private Vector3 m_v3LastWorldPoint;
+    private bool m_bIsNewPointerDown;
     #endregion
 
     #region Functions
@@ -30,13 +31,17 @@ public class InputController : MonoBehaviour {
             if (_oPlaneTouch.Raycast(_oRayTouch, out float _fDistanceTouch)) {
                 Vector3 _v3WorldPoint = _oRayTouch.GetPoint(_fDistanceTouch);
                 if (_oTouch.phase == TouchPhase.Began) {
-                    m_aOnPointerDown?.Invoke(_v3WorldPoint);
-                    m_v3LastWorldPoint = _v3WorldPoint;
+                    if (m_bIsNewPointerDown == false) {
+                        m_bIsNewPointerDown = true;
+                        m_aOnPointerDown?.Invoke(_v3WorldPoint);
+                        m_v3LastWorldPoint = _v3WorldPoint;
+                    }
                 }
                 else if (_oTouch.phase == TouchPhase.Ended) {
+                    m_bIsNewPointerDown = false;
                     m_aOnPointerUp?.Invoke(_v3WorldPoint);
                 }
-                else if (_oTouch.phase == TouchPhase.Moved) {
+                else {
                     if ((m_v3LastWorldPoint - _v3WorldPoint).magnitude > 0) {
                         m_aOnDrag?.Invoke(_v3WorldPoint);
                         m_v3LastWorldPoint = _v3WorldPoint;
