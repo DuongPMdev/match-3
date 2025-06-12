@@ -44,23 +44,24 @@ public class InputController : MonoBehaviour {
                 }
             }
         }
+        else {
+            Ray _oRayMouse = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Plane _oPlaneMouse = new Plane(Vector3.forward, Vector3.zero);
 
-        Ray _oRayMouse = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Plane _oPlaneMouse = new Plane(Vector3.forward, Vector3.zero);
-
-        if (_oPlaneMouse.Raycast(_oRayMouse, out float _fDistanceMouse)) {
-            Vector3 _v3WorldPoint = _oRayMouse.GetPoint(_fDistanceMouse);
-            if (Input.GetMouseButtonDown(0) == true) {
-                m_aOnPointerDown?.Invoke(_v3WorldPoint);
-                m_v3LastWorldPoint = _v3WorldPoint;
-            }
-            else if (Input.GetMouseButtonUp(0) == true) {
-                m_aOnPointerUp?.Invoke(_v3WorldPoint);
-            }
-            else if (Input.GetMouseButton(0) == true) {
-                if ((m_v3LastWorldPoint - _v3WorldPoint).magnitude > 0) {
-                    m_aOnDrag?.Invoke(_v3WorldPoint);
+            if (_oPlaneMouse.Raycast(_oRayMouse, out float _fDistanceMouse)) {
+                Vector3 _v3WorldPoint = _oRayMouse.GetPoint(_fDistanceMouse);
+                if (Input.GetMouseButtonDown(0) == true) {
+                    m_aOnPointerDown?.Invoke(_v3WorldPoint);
                     m_v3LastWorldPoint = _v3WorldPoint;
+                }
+                else if (Input.GetMouseButtonUp(0) == true) {
+                    m_aOnPointerUp?.Invoke(_v3WorldPoint);
+                }
+                else if (Input.GetMouseButton(0) == true) {
+                    if ((m_v3LastWorldPoint - _v3WorldPoint).magnitude > 0) {
+                        m_aOnDrag?.Invoke(_v3WorldPoint);
+                        m_v3LastWorldPoint = _v3WorldPoint;
+                    }
                 }
             }
         }
