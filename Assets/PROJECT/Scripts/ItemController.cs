@@ -20,7 +20,7 @@ public class ItemController : MonoBehaviour {
     public float m_fCurrentSpeed;
 
     private bool m_bIsMoving;
-
+    private bool m_bIsUpgraded;
     private int m_nActivedTime;
     #endregion
 
@@ -31,6 +31,7 @@ public class ItemController : MonoBehaviour {
         m_fMaxSpeed = GameSceneController.Instance.GetTileMaxSpeed();
         m_fCurrentSpeed = m_fStartSpeed;
         m_bIsMoving = false;
+        m_bIsUpgraded = false;
         m_nActivedTime = 0;
     }
 
@@ -41,6 +42,11 @@ public class ItemController : MonoBehaviour {
         s_oItemSpriteRenderer.sprite = _oItemSprite;
 
         StartCoroutine(SpawnIE());
+    }
+
+    public void UpgradeItem(string p_sType) {
+        m_oItemModel.type = p_sType;
+        m_bIsUpgraded = true;
     }
 
     public ItemModel GetItemModel() {
@@ -102,7 +108,10 @@ public class ItemController : MonoBehaviour {
         }
 
         transform.localPosition = Vector3.zero;
-
+        m_oTile.CleanItem();
+        if (m_bIsUpgraded == true) {
+            LevelController.Instance.AddActiveItem(m_oItemModel.piece, this);
+        }
         LevelController.Instance.OnMoveItemDone();
         m_bIsMoving = false;
 
@@ -113,19 +122,22 @@ public class ItemController : MonoBehaviour {
         return m_bIsMoving;
     }
 
-    public void Active() {
+    public void Active(int p_nPiece) {
+        if (m_oItemModel.type.Equals("rainbow") == true) {
+            m_oItemModel.piece = p_nPiece;
+        }
         LevelController.Instance.ActiveItem(m_oItemModel);
-        if (m_oItemModel.type.Equals("bomb") == true) {
-            if (m_nActivedTime > 0) {
-                m_oTile.RemoveItem();
-                Destroy(gameObject);
+        bool _bIsDestroy = true;
+        if (m_oItemModel.type.Equals("bomb") == true || m_oItemModel.type.Equals("super_bomb") == true) {
+            if (m_nActivedTime == 0) {
+                _bIsDestroy = false;
+                m_nActivedTime++;
             }
         }
-        else {
+        if (_bIsDestroy == true) {
             m_oTile.RemoveItem();
             Destroy(gameObject);
         }
-        m_nActivedTime++;
     }
     #endregion
 

@@ -111,6 +111,7 @@ public class PieceController : MonoBehaviour {
             yield return null;
         }
         yield return new WaitForSeconds(0.1f);
+
         Destroy(gameObject);
         LevelController.Instance.OnCollectPieceDone();
     }

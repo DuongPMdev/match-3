@@ -56,7 +56,7 @@ public class TileController : MonoBehaviour {
         return -1;
     }
 
-    public void CreatePieceModel(PieceModel p_oPieceModel, bool p_bUpper = false) {
+    public void CreatePiece(PieceModel p_oPieceModel, bool p_bUpper = false) {
         GameObject _goPiece = Instantiate(s_goPrefabPiece, s_tfPieceContainer.position, Quaternion.identity, s_tfPieceContainer);
         if (p_bUpper == true) {
             _goPiece.transform.localPosition = Vector3.up;
@@ -78,7 +78,7 @@ public class TileController : MonoBehaviour {
         return m_oPiece;
     }
 
-    public void CreateItemModel(ItemModel p_oItemModel) {
+    public void CreateItem(ItemModel p_oItemModel) {
         GameObject _goItem = Instantiate(s_goPrefabItem, s_tfItemContainer.position, Quaternion.identity, s_tfItemContainer);
         _goItem.GetComponent<ItemController>().SetItemModel(p_oItemModel);
         _goItem.GetComponent<ItemController>().SetTile(this);
@@ -93,11 +93,15 @@ public class TileController : MonoBehaviour {
         }
     }
 
+    private void UpgradeItem(string p_sType) {
+        m_oItem.UpgradeItem(p_sType);
+    }
+
     public ItemController GetItem() {
         return m_oItem;
     }
 
-    public void CreateObstacleModel(ObstacleModel p_oObstacleModel) {
+    public void CreateObstacle(ObstacleModel p_oObstacleModel) {
         GameObject _goObstacle = Instantiate(s_goPrefabObstacle, s_tfObstacleContainer.position, Quaternion.identity, s_tfObstacleContainer);
         _goObstacle.GetComponent<ObstacleController>().SetObstacleModel(p_oObstacleModel);
         _goObstacle.GetComponent<ObstacleController>().SetTile(this);
@@ -203,21 +207,68 @@ public class TileController : MonoBehaviour {
     }
 
     public void SwapWith(TileController p_oTile) {
-        ObstacleController _oTempObstacle = m_oObstacle;
-        ItemController _oTempItem = m_oItem;
-        PieceController _oTempPiece = m_oPiece;
+        int _nNumberItem = 0;
+        int _nNumberRainbowItem = 0;
+        int _nNumberBombItem = 0;
+        if (m_oItem != null) {
+            _nNumberItem++;
+            if (m_oItem.GetItemModel().type.Equals("rainbow") == true) {
+                _nNumberRainbowItem++;
+            }
+            if (m_oItem.GetItemModel().type.Equals("bomb") == true) {
+                _nNumberBombItem++;
+            }
+        }
+        if (p_oTile.GetItem() != null) {
+            _nNumberItem++;
+            if (p_oTile.GetItem().GetItemModel().type.Equals("rainbow") == true) {
+                _nNumberRainbowItem++;
+            }
+            if (p_oTile.GetItem().GetItemModel().type.Equals("bomb") == true) {
+                _nNumberBombItem++;
+            }
+        }
 
-        SetObstacle(p_oTile.GetObstacle());
-        SetItem(p_oTile.GetItem());
-        SetPiece(p_oTile.GetPiece());
+        bool _bItemMergeable = false;
+        if (_nNumberItem == 2) {
+            if (_nNumberRainbowItem == 2) {
+                _bItemMergeable = true;
+            }
+            else if (_nNumberRainbowItem == 0) {
+                _bItemMergeable = true;
+            }
+        }
 
-        p_oTile.SetObstacle(_oTempObstacle);
-        p_oTile.SetItem(_oTempItem);
-        p_oTile.SetPiece(_oTempPiece);
+        if (_bItemMergeable == true) {
+            SetItem(p_oTile.GetItem());
+            if (_nNumberBombItem == 2) {
+                UpgradeItem("super_bomb");
+            }
+            if (_nNumberBombItem == 1) {
+                UpgradeItem("super_clear");
+            }
+            if (_nNumberBombItem == 0) {
+                UpgradeItem("clear_row_column");
+            }
+            p_oTile.RemoveItem();
+        }
+        else {
+            ObstacleController _oTempObstacle = m_oObstacle;
+            ItemController _oTempItem = m_oItem;
+            PieceController _oTempPiece = m_oPiece;
+
+            SetObstacle(p_oTile.GetObstacle());
+            SetItem(p_oTile.GetItem());
+            SetPiece(p_oTile.GetPiece());
+
+            p_oTile.SetObstacle(_oTempObstacle);
+            p_oTile.SetItem(_oTempItem);
+            p_oTile.SetPiece(_oTempPiece);
+        }
     }
 
     public void FillUp(PieceModel p_oPieceModel) {
-        CreatePieceModel(p_oPieceModel, true);
+        CreatePiece(p_oPieceModel, true);
     }
 
     public void ResetSpeed() {
@@ -247,14 +298,14 @@ public class TileController : MonoBehaviour {
 
     public void Match() {
         if (m_oItem != null) {
-            m_oItem.Active();
+            m_oItem.Active(m_oItem.GetItemModel().piece);
         }
         if (m_oPiece != null) {
             m_oPiece.Collect();
         }
     }
 
-    public void TakeDamage(int p_nDamage) {
+    public void TakeDamage(int p_nPiece, int p_nDamage) {
         GameObject _goTakeDamageVFX = Instantiate(s_goPrefabTakeDamageVFX, s_tfVFXContainer.position, Quaternion.identity, s_tfVFXContainer);
         Destroy(_goTakeDamageVFX, 0.3f);
 
@@ -262,7 +313,7 @@ public class TileController : MonoBehaviour {
             m_oObstacle.TakeDamage(p_nDamage);
         }
         else if (m_oItem != null) {
-            m_oItem.Active();
+            m_oItem.Active(p_nPiece);
         }
         else if (m_oPiece != null) {
             m_oPiece.Collect();
@@ -274,6 +325,17 @@ public class TileController : MonoBehaviour {
     }
 
     public void RemoveItem() {
+        m_oItem = null;
+    }
+
+    public void CleanItem() {
+        if (s_tfItemContainer.childCount > 1) {
+            Destroy(s_tfItemContainer.GetChild(0).gameObject);
+        }
+    }
+
+    public void DestroyItem() {
+        Destroy(m_oItem.gameObject);
         m_oItem = null;
     }
 

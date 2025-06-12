@@ -127,6 +127,29 @@ public class ToolSceneController : MonoBehaviour {
         LoadLevelModelToUI(true);
     }
 
+    private void SetInitItem(int p_nPiece, string p_sItem) {
+        bool _bContained = false;
+        for (int i = 0; i < m_oLevelModel.init_item.Count; i++) {
+            ItemModel _oItemModel = m_oLevelModel.init_item[i];
+            if (_oItemModel.position.Equals(m_v2iSelectedPosition) == true) {
+                if (p_sItem.Equals("empty") == true) {
+                    m_oLevelModel.init_item.Remove(_oItemModel);
+                }
+                else {
+                    _oItemModel.type = p_sItem;
+                }
+                _bContained = true;
+                break;
+            }
+        }
+        if (_bContained == false) {
+            if (p_sItem.Equals("empty") == false) {
+                m_oLevelModel.init_item.Add(new ItemModel(m_v2iSelectedPosition, p_nPiece, p_sItem));
+            }
+        }
+        LoadLevelModelToUI(true);
+    }
+
     private void LoadLevelModelToUI(bool p_bSave) {
         s_uiInputFieldLevel.text = m_oLevelModel.level.ToString();
         s_uiInputFieldLevelModelSizeX.text = m_oLevelModel.size.x.ToString();
@@ -149,6 +172,14 @@ public class ToolSceneController : MonoBehaviour {
             ToolTileController _oToolTile = GetToolTileAt(_oPieceModel.position);
             if (_oToolTile != null) {
                 _oToolTile.SetPieceModel(_oPieceModel);
+            }
+        }
+
+        for (int i = 0; i < m_oLevelModel.init_item.Count; i++) {
+            ItemModel _oItemModel = m_oLevelModel.init_item[i];
+            ToolTileController _oToolTile = GetToolTileAt(_oItemModel.position);
+            if (_oToolTile != null) {
+                _oToolTile.SetItemModel(_oItemModel);
             }
         }
 
@@ -201,6 +232,26 @@ public class ToolSceneController : MonoBehaviour {
 
     public void OnClickButtonSetInitPiece(int p_nValue) {
         SetInitPiece(p_nValue);
+    }
+
+    public void OnClickButtonSetInitItemEmpty() {
+        SetInitItem(0, "empty");
+    }
+
+    public void OnClickButtonSetInitItemRainbow() {
+        SetInitItem(0, "rainbow");
+    }
+
+    public void OnClickButtonSetInitItemBomb(int p_nPiece) {
+        SetInitItem(p_nPiece, "bomb");
+    }
+
+    public void OnClickButtonSetInitItemClearRow(int p_nPiece) {
+        SetInitItem(p_nPiece, "clear_row");
+    }
+
+    public void OnClickButtonSetInitItemClearColumn(int p_nPiece) {
+        SetInitItem(p_nPiece, "clear_column");
     }
 
     public void OnClickButtonSetInitObstacle(string p_sObstacle) {
