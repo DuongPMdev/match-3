@@ -85,8 +85,6 @@ public class PieceController : MonoBehaviour {
 
         LevelController.Instance.OnMovePieceDone();
         m_bIsMoving = false;
-
-        yield return null;
     }
 
     public bool IsMoving() {

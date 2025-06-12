@@ -114,8 +114,6 @@ public class ItemController : MonoBehaviour {
         }
         LevelController.Instance.OnMoveItemDone();
         m_bIsMoving = false;
-
-        yield return null;
     }
 
     public bool IsMoving() {

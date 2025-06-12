@@ -84,8 +84,6 @@ public class ObstacleController : MonoBehaviour {
 
         LevelController.Instance.OnMoveObstacleDone();
         m_bIsMoving = false;
-
-        yield return null;
     }
 
     public bool IsMoving() {

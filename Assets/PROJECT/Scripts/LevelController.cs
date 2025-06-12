@@ -212,7 +212,9 @@ public class LevelController : MonoBehaviour {
                 if (m_lCreatingItem.Count > 0) {
                     for (int i = 0; i < m_lCreatingItem.Count; i++) {
                         CreatingItem _oCreatingItem = m_lCreatingItem[i];
-                        _oCreatingItem.g_oTile.CreateItem(_oCreatingItem.g_oItem);
+                        if (_oCreatingItem.g_oItem.type.Equals("rainbow") == false) {
+                            _oCreatingItem.g_oTile.CreateItem(_oCreatingItem.g_oItem);
+                        }
                     }
                     m_lCreatingItem.Clear();
                     m_oState = STATE.CREATE_ITEM;
