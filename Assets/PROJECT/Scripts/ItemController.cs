@@ -20,7 +20,7 @@ public class ItemController : MonoBehaviour {
     public float m_fCurrentSpeed;
 
     private bool m_bIsMoving;
-    private bool m_bIsUpgraded;
+    private bool m_bIsActiveAfterMove;
     private int m_nActivedTime;
     #endregion
 
@@ -31,7 +31,7 @@ public class ItemController : MonoBehaviour {
         m_fMaxSpeed = GameSceneController.Instance.GetTileMaxSpeed();
         m_fCurrentSpeed = m_fStartSpeed;
         m_bIsMoving = false;
-        m_bIsUpgraded = false;
+        m_bIsActiveAfterMove = false;
         m_nActivedTime = 0;
     }
 
@@ -46,7 +46,12 @@ public class ItemController : MonoBehaviour {
 
     public void UpgradeItem(string p_sType) {
         m_oItemModel.type = p_sType;
-        m_bIsUpgraded = true;
+        m_bIsActiveAfterMove = true;
+    }
+
+    public void SetPiece(int p_nPiece) {
+        m_oItemModel.piece = p_nPiece;
+        m_bIsActiveAfterMove = true;
     }
 
     public ItemModel GetItemModel() {
@@ -109,7 +114,7 @@ public class ItemController : MonoBehaviour {
 
         transform.localPosition = Vector3.zero;
         m_oTile.CleanItem();
-        if (m_bIsUpgraded == true) {
+        if (m_bIsActiveAfterMove == true) {
             LevelController.Instance.AddActiveItem(m_oItemModel.piece, this);
         }
         LevelController.Instance.OnMoveItemDone();
@@ -121,18 +126,32 @@ public class ItemController : MonoBehaviour {
     }
 
     public void Active(int p_nPiece) {
+        if (m_nActivedTime > 0) {
+            return;
+        }
         if (m_oItemModel.type.Equals("rainbow") == true) {
             m_oItemModel.piece = p_nPiece;
         }
         LevelController.Instance.ActiveItem(m_oItemModel);
         bool _bIsDestroy = true;
         if (m_oItemModel.type.Equals("bomb") == true || m_oItemModel.type.Equals("super_bomb") == true) {
-            if (m_nActivedTime == 0) {
-                _bIsDestroy = false;
-                m_nActivedTime++;
-            }
+            _bIsDestroy = false;
+            m_nActivedTime++;
+            LevelController.Instance.AddActiveItemTwice(m_oItemModel.piece, this);
         }
         if (_bIsDestroy == true) {
+            m_oTile.RemoveItem();
+            Destroy(gameObject);
+        }
+    }
+
+    public void ActiveTwice(int p_nPiece) {
+        if (m_nActivedTime != 1) {
+            return;
+        }
+        if (m_oItemModel.type.Equals("bomb") == true || m_oItemModel.type.Equals("super_bomb") == true) {
+            LevelController.Instance.ActiveItem(m_oItemModel);
+            m_nActivedTime++;
             m_oTile.RemoveItem();
             Destroy(gameObject);
         }

@@ -94,7 +94,17 @@ public class TileController : MonoBehaviour {
     }
 
     private void UpgradeItem(string p_sType) {
-        m_oItem.UpgradeItem(p_sType);
+        if (m_oItem != null) {
+            m_oItem.UpgradeItem(p_sType);
+        }
+        else {
+            if (m_oPiece != null) {
+                int _nPiece = m_oPiece.GetPieceModel().piece;
+                ItemModel _oItemModel = new ItemModel(m_v2iPosition, _nPiece, p_sType);
+                CreateItem(_oItemModel);
+                RemovePiece();
+            }
+        }
     }
 
     public ItemController GetItem() {
@@ -241,13 +251,24 @@ public class TileController : MonoBehaviour {
 
         if (_bItemMergeable == true) {
             SetItem(p_oTile.GetItem());
-            if (_nNumberBombItem == 2) {
+            if (_nNumberRainbowItem == 2) {
+                UpgradeItem("super_rainbow");
+            }
+            else if (_nNumberRainbowItem == 1) {
+                if (_nNumberBombItem == 1) {
+                    UpgradeItem("bomb_rainbow");
+                }
+                else {
+                    UpgradeItem("clear_rainbow");
+                }
+            }
+            else if (_nNumberBombItem == 2) {
                 UpgradeItem("super_bomb");
             }
-            if (_nNumberBombItem == 1) {
+            else if (_nNumberBombItem == 1) {
                 UpgradeItem("super_clear");
             }
-            if (_nNumberBombItem == 0) {
+            else if (_nNumberBombItem == 0) {
                 UpgradeItem("clear_row_column");
             }
             p_oTile.RemoveItem();
@@ -264,6 +285,15 @@ public class TileController : MonoBehaviour {
             p_oTile.SetObstacle(_oTempObstacle);
             p_oTile.SetItem(_oTempItem);
             p_oTile.SetPiece(_oTempPiece);
+            
+            if (_nNumberRainbowItem == 1) {
+                if (m_oItem != null && p_oTile.GetPiece() != null) {
+                    m_oItem.SetPiece(p_oTile.GetPiece().GetPieceModel().piece);
+                }
+                if (m_oPiece != null && p_oTile.GetItem() != null) {
+                    p_oTile.GetItem().SetPiece(m_oPiece.GetPieceModel().piece);
+                }
+            }
         }
     }
 
