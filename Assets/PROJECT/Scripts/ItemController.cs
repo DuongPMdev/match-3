@@ -8,6 +8,8 @@ public class ItemController : MonoBehaviour {
     [Header("Views")]
     [SerializeField]
     private SpriteRenderer s_oItemSpriteRenderer;
+    [SerializeField]
+    private AnimationCurve s_oSpawnScale;
     #endregion
 
     #region Variables
@@ -17,10 +19,11 @@ public class ItemController : MonoBehaviour {
     private float m_fStartSpeed;
     private float m_fAcceleration;
     private float m_fMaxSpeed;
-    public float m_fCurrentSpeed;
+    private float m_fCurrentSpeed;
 
     private bool m_bIsMoving;
     private bool m_bIsActiveAfterMove;
+    private bool m_bIsAutoActive;
     private int m_nActivedTime;
     #endregion
 
@@ -32,6 +35,7 @@ public class ItemController : MonoBehaviour {
         m_fCurrentSpeed = m_fStartSpeed;
         m_bIsMoving = false;
         m_bIsActiveAfterMove = false;
+        m_bIsAutoActive = false;
         m_nActivedTime = 0;
     }
 
@@ -49,6 +53,31 @@ public class ItemController : MonoBehaviour {
         m_bIsActiveAfterMove = true;
     }
 
+    public void AutoActive(int p_nPiece, float p_fDelay) {
+        m_bIsAutoActive = true;
+        StartCoroutine(AutoActiveIE(p_nPiece, p_fDelay));
+    }
+
+    private IEnumerator AutoActiveIE(int p_nPiece, float p_fDelay) {
+        yield return new WaitForSeconds(p_fDelay);
+
+        m_nActivedTime++;
+        if (m_oItemModel.type.Equals("rainbow") == true) {
+            m_oItemModel.piece = p_nPiece;
+        }
+        LevelController.Instance.ActiveItem(m_oItemModel);
+        bool _bIsDestroy = true;
+        if (m_oItemModel.type.Equals("bomb") == true || m_oItemModel.type.Equals("super_bomb") == true) {
+            _bIsDestroy = false;
+            m_bIsAutoActive = false;
+            LevelController.Instance.AddActiveItemTwice(m_oItemModel.piece, this);
+        }
+        if (_bIsDestroy == true) {
+            m_oTile.RemoveItem();
+            Destroy(gameObject);
+        }
+    }
+
     public void SetPiece(int p_nPiece) {
         m_oItemModel.piece = p_nPiece;
         m_bIsActiveAfterMove = true;
@@ -61,15 +90,17 @@ public class ItemController : MonoBehaviour {
     private IEnumerator SpawnIE() {
         LevelController.Instance.OnCreateItemStart();
 
-        float _fDuration = 0.2f;
+        float _fDuration = 0.1f;
         float _fElapsedTime = 0.0f;
         while (_fElapsedTime < _fDuration) {
             float _fProceed = _fElapsedTime / _fDuration;
-            transform.localScale = Vector3.one * _fProceed;
+            float _fScale = s_oSpawnScale.Evaluate(_fProceed);
+            transform.localScale = Vector3.one * _fScale;
 
             _fElapsedTime += Time.deltaTime;
             yield return null;
         }
+        transform.localScale = Vector3.one;
         LevelController.Instance.OnCreateItemDone();
     }
 
@@ -126,9 +157,13 @@ public class ItemController : MonoBehaviour {
     }
 
     public void Active(int p_nPiece) {
+        if (m_bIsAutoActive == true) {
+            return;
+        }
         if (m_nActivedTime > 0) {
             return;
         }
+        m_nActivedTime++;
         if (m_oItemModel.type.Equals("rainbow") == true) {
             m_oItemModel.piece = p_nPiece;
         }
@@ -136,7 +171,7 @@ public class ItemController : MonoBehaviour {
         bool _bIsDestroy = true;
         if (m_oItemModel.type.Equals("bomb") == true || m_oItemModel.type.Equals("super_bomb") == true) {
             _bIsDestroy = false;
-            m_nActivedTime++;
+            s_oItemSpriteRenderer.GetComponent<FrequenceScaleObject>().enabled = true;
             LevelController.Instance.AddActiveItemTwice(m_oItemModel.piece, this);
         }
         if (_bIsDestroy == true) {
@@ -146,12 +181,15 @@ public class ItemController : MonoBehaviour {
     }
 
     public void ActiveTwice(int p_nPiece) {
+        if (m_bIsAutoActive == true) {
+            return;
+        }
         if (m_nActivedTime != 1) {
             return;
         }
+        m_nActivedTime++;
         if (m_oItemModel.type.Equals("bomb") == true || m_oItemModel.type.Equals("super_bomb") == true) {
             LevelController.Instance.ActiveItem(m_oItemModel);
-            m_nActivedTime++;
             m_oTile.RemoveItem();
             Destroy(gameObject);
         }

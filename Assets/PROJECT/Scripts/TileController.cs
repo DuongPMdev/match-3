@@ -93,16 +93,16 @@ public class TileController : MonoBehaviour {
         }
     }
 
-    private void UpgradeItem(string p_sType) {
+    public void UpgradeItem(int p_nPiece, string p_sType) {
         if (m_oItem != null) {
+            m_oItem.SetPiece(p_nPiece);
             m_oItem.UpgradeItem(p_sType);
         }
         else {
             if (m_oPiece != null) {
-                int _nPiece = m_oPiece.GetPieceModel().piece;
-                ItemModel _oItemModel = new ItemModel(m_v2iPosition, _nPiece, p_sType);
+                ItemModel _oItemModel = new ItemModel(m_v2iPosition, p_nPiece, p_sType);
                 CreateItem(_oItemModel);
-                RemovePiece();
+                DestroyPiece();
             }
         }
     }
@@ -220,13 +220,17 @@ public class TileController : MonoBehaviour {
         int _nNumberItem = 0;
         int _nNumberRainbowItem = 0;
         int _nNumberBombItem = 0;
+        int _nPiece = 0;
         if (m_oItem != null) {
             _nNumberItem++;
             if (m_oItem.GetItemModel().type.Equals("rainbow") == true) {
                 _nNumberRainbowItem++;
             }
-            if (m_oItem.GetItemModel().type.Equals("bomb") == true) {
-                _nNumberBombItem++;
+            else {
+                _nPiece = m_oItem.GetItemModel().piece;
+                if (m_oItem.GetItemModel().type.Equals("bomb") == true) {
+                    _nNumberBombItem++;
+                }
             }
         }
         if (p_oTile.GetItem() != null) {
@@ -234,42 +238,35 @@ public class TileController : MonoBehaviour {
             if (p_oTile.GetItem().GetItemModel().type.Equals("rainbow") == true) {
                 _nNumberRainbowItem++;
             }
-            if (p_oTile.GetItem().GetItemModel().type.Equals("bomb") == true) {
-                _nNumberBombItem++;
+            else {
+                _nPiece = p_oTile.GetItem().GetItemModel().piece;
+                if (p_oTile.GetItem().GetItemModel().type.Equals("bomb") == true) {
+                    _nNumberBombItem++;
+                }
             }
         }
 
-        bool _bItemMergeable = false;
         if (_nNumberItem == 2) {
-            if (_nNumberRainbowItem == 2) {
-                _bItemMergeable = true;
-            }
-            else if (_nNumberRainbowItem == 0) {
-                _bItemMergeable = true;
-            }
-        }
-
-        if (_bItemMergeable == true) {
             SetItem(p_oTile.GetItem());
             if (_nNumberRainbowItem == 2) {
-                UpgradeItem("super_rainbow");
+                UpgradeItem(_nPiece, "super_rainbow");
             }
             else if (_nNumberRainbowItem == 1) {
                 if (_nNumberBombItem == 1) {
-                    UpgradeItem("bomb_rainbow");
+                    UpgradeItem(_nPiece, "bomb_rainbow");
                 }
                 else {
-                    UpgradeItem("clear_rainbow");
+                    UpgradeItem(_nPiece, "clear_rainbow");
                 }
             }
             else if (_nNumberBombItem == 2) {
-                UpgradeItem("super_bomb");
+                UpgradeItem(_nPiece, "super_bomb");
             }
             else if (_nNumberBombItem == 1) {
-                UpgradeItem("super_clear");
+                UpgradeItem(_nPiece, "super_clear");
             }
             else if (_nNumberBombItem == 0) {
-                UpgradeItem("clear_row_column");
+                UpgradeItem(_nPiece, "clear_row_column");
             }
             p_oTile.RemoveItem();
         }
@@ -351,6 +348,11 @@ public class TileController : MonoBehaviour {
     }
 
     public void RemovePiece() {
+        m_oPiece = null;
+    }
+
+    public void DestroyPiece() {
+        Destroy(m_oPiece.gameObject);
         m_oPiece = null;
     }
 
