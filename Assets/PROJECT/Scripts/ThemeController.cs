@@ -11,6 +11,8 @@ public class Theme {
     public List<Sprite> g_lItemClearColumnSprite;
     public List<Sprite> g_lItemClearRowSprite;
     public Sprite g_oItemRainbow;
+    public Sprite g_oObstacleNull;
+    public Sprite g_oObstacleLocker;
 
 }
 
@@ -48,6 +50,16 @@ public class ThemeController : MonoBehaviour {
         }
         if (p_sType.Equals("clear_column") == true) {
             return m_lTheme[m_nTheme].g_lItemClearColumnSprite[p_nPiece];
+        }
+        return null;
+    }
+
+    public Sprite GetObstacleSprite(string p_sType) {
+        if (p_sType.Equals("null") == true) {
+            return m_lTheme[m_nTheme].g_oObstacleNull;
+        }
+        else if (p_sType.Equals("locker") == true) {
+            return m_lTheme[m_nTheme].g_oObstacleLocker;
         }
         return null;
     }

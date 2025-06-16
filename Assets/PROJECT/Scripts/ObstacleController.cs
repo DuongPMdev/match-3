@@ -5,6 +5,7 @@ using UnityEngine;
 public static class ObstacleTypes {
 
     public const string NULL = "null";
+    public const string LOCKER = "locker";
 
 }
 
@@ -13,7 +14,7 @@ public class ObstacleController : MonoBehaviour {
     #region Views
     [Header("Views")]
     [SerializeField]
-    private Transform s_uiObstacleImage;
+    private SpriteRenderer s_uiObstacleSpriteRenderer;
     #endregion
 
     #region Variables
@@ -39,6 +40,13 @@ public class ObstacleController : MonoBehaviour {
 
     public void SetObstacleModel(ObstacleModel p_oObstacleModel) {
         m_oObstacleModel = p_oObstacleModel;
+
+        Sprite _oObstacleSprite = ThemeController.Instance.GetObstacleSprite(p_oObstacleModel.type);
+        s_uiObstacleSpriteRenderer.sprite = _oObstacleSprite;
+    }
+
+    public ObstacleModel GetObstacleModel() {
+        return m_oObstacleModel;
     }
 
     public void SetTile(TileController p_oTile) {
@@ -98,7 +106,30 @@ public class ObstacleController : MonoBehaviour {
     }
 
     public void TakeDamage(int p_nDamage) {
+        Break();
+    }
 
+    public void Break() {
+        StartCoroutine(BreakIE());
+    }
+
+    private IEnumerator BreakIE() {
+        //LevelController.Instance.OnBreakObstacleStart();
+        m_oTile.RemoveObstacle();
+
+        float _fDuration = 0.2f;
+        float _fElapsedTime = 0.0f;
+        while (_fElapsedTime < _fDuration) {
+            float _fProceed = _fElapsedTime / _fDuration;
+            transform.localScale = Vector3.one * (1.0f - _fProceed);
+
+            _fElapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.1f);
+
+        Destroy(gameObject);
+        //LevelController.Instance.OnBreakObstacleDone();
     }
     #endregion
 

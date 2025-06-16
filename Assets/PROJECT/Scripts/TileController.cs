@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class TileController : MonoBehaviour {
-    
+
     #region Prefabs
     [Header("Prefabs")]
     [SerializeField]
@@ -157,9 +157,13 @@ public class TileController : MonoBehaviour {
             return false;
         }
         if (m_oObstacle != null) {
-            if (m_oObstacle.IsNull() == true) {
-                return false;
-            }
+            //if (m_oObstacle.IsNull() == true) {
+            //    return false;
+            //}
+            //if (m_oObstacle.GetObstacleModel().type.Equals(ObstacleTypes.LOCKER) == true) {
+            //    return false;
+            //}
+            return false;
         }
         return true;
     }
@@ -282,7 +286,7 @@ public class TileController : MonoBehaviour {
             p_oTile.SetObstacle(_oTempObstacle);
             p_oTile.SetItem(_oTempItem);
             p_oTile.SetPiece(_oTempPiece);
-            
+
             if (_nNumberRainbowItem == 1) {
                 if (m_oItem != null && p_oTile.GetPiece() != null) {
                     m_oItem.SetPiece(p_oTile.GetPiece().GetPieceModel().piece);
@@ -328,7 +332,22 @@ public class TileController : MonoBehaviour {
             m_oItem.Active(m_oItem.GetItemModel().piece);
         }
         if (m_oPiece != null) {
-            m_oPiece.Collect();
+            if (m_oObstacle != null) {
+                if (m_oObstacle.GetObstacleModel().type.Equals("locker") == true) {
+                    m_oObstacle.Break();
+                }
+            }
+            else {
+                m_oPiece.Collect();
+            }
+        }
+    }
+
+    public void OnMatchAround() {
+        if (m_oObstacle != null) {
+            if (m_oObstacle.GetObstacleModel().type.Equals("") == true) {
+
+            }
         }
     }
 
@@ -358,6 +377,10 @@ public class TileController : MonoBehaviour {
 
     public void RemoveItem() {
         m_oItem = null;
+    }
+
+    public void RemoveObstacle() {
+        m_oObstacle = null;
     }
 
     public void CleanItem() {

@@ -153,7 +153,7 @@ public class LevelController : MonoBehaviour {
             }
         }
         else if (m_oState == STATE.BOOSTER) {
-            if (IsCollectingPiece() == false) {
+            if (IsCollectingPiece() == false && IsActivingItem() == false) {
                 m_oState = STATE.MOVE;
             }
         }
@@ -182,14 +182,14 @@ public class LevelController : MonoBehaviour {
 
             if (IsMoving() == false) {
                 if (m_lActivingItem.Count > 0 || m_lActivingItemTwice.Count > 0) {
-                    for (int i = 0; i < m_lActivingItem.Count; i++) {
-                        m_lActivingItem[i].g_oItem.Active(m_lActivingItem[i].g_nPiece);
-                    }
-                    m_lActivingItem.Clear();
                     for (int i = 0; i < m_lActivingItemTwice.Count; i++) {
                         m_lActivingItemTwice[i].g_oItem.ActiveTwice(m_lActivingItemTwice[i].g_nPiece);
                     }
                     m_lActivingItemTwice.Clear();
+                    for (int i = 0; i < m_lActivingItem.Count; i++) {
+                        m_lActivingItem[i].g_oItem.Active(m_lActivingItem[i].g_nPiece);
+                    }
+                    m_lActivingItem.Clear();
                     m_oState = STATE.ACTIVE_ITEM;
                 }
                 else {
@@ -269,6 +269,14 @@ public class LevelController : MonoBehaviour {
         }
         for (int i = 0; i < p_lMatch.Count; i++) {
             p_lMatch[i].Match();
+            OnMatchAt(p_lMatch[i]);
+        }
+    }
+
+    private void OnMatchAt(TileController p_oTile) {
+        List<TileController> _lNeighberTile = GetAllNeighber(p_oTile);
+        for (int i = 0; i < _lNeighberTile.Count; i++) {
+            _lNeighberTile[i].OnMatchAround();
         }
     }
 
@@ -403,7 +411,7 @@ public class LevelController : MonoBehaviour {
             return;
         }
         
-        Vector2Int _v2iSlotPosition = GetSlotPosition(p_v3PointerPosition);
+        Vector2Int _v2iSlotPosition = GetTilePosition(p_v3PointerPosition);
         TileController _oTile = GetTileAt(_v2iSlotPosition);
         if (_oTile != null) {
             if (_oTile.IsMoveable() == false) {
@@ -451,8 +459,8 @@ public class LevelController : MonoBehaviour {
             return;
         }
 
-        Vector2Int _v2iSlotPosition = GetSlotPosition(p_v3PointerPosition);
-        TileController _oTile = GetTileAt(_v2iSlotPosition);
+        Vector2Int _v2iTilePosition = GetTilePosition(p_v3PointerPosition);
+        TileController _oTile = GetTileAt(_v2iTilePosition);
         if (_oTile != null) {
             if (_oTile.IsMoveable() == false) {
                 return;
@@ -1113,7 +1121,24 @@ public class LevelController : MonoBehaviour {
         return m_arTile[p_v2iPosition.x, p_v2iPosition.y];
     }
 
-    private Vector2Int GetSlotPosition(Vector3 p_v3Position) {
+    private List<TileController> GetAllNeighber(TileController p_oTileController) {
+        List<TileController> _lNeighberTile = new List<TileController>();
+        List<Vector2Int> _lOffset = new List<Vector2Int>() {
+            Vector2Int.right, Vector2Int.down, Vector2Int.left, Vector2Int.up
+        };
+
+        Vector2Int _v2iPosition = p_oTileController.GetPosition();
+        for (int i = 0; i < _lOffset.Count; i++) {
+            TileController _oNeighberTile = GetTileAt(_v2iPosition + _lOffset[i]);
+            if (_oNeighberTile != null) {
+                _lNeighberTile.Add(_oNeighberTile);
+            }
+        }
+
+        return _lNeighberTile;
+    }
+
+    private Vector2Int GetTilePosition(Vector3 p_v3Position) {
         Vector3 _v3AnchorPosition = p_v3Position + new Vector3(m_oLevelModel.size.x / 2.0f, m_oLevelModel.size.y / 2.0f, 0.0f);
         int _nX = _v3AnchorPosition.x >= 0.0f ? (int)_v3AnchorPosition.x : -1;
         int _nY = _v3AnchorPosition.y >= 0.0f ? (int)_v3AnchorPosition.y : -1;

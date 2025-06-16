@@ -856,6 +856,8 @@ MonoBehaviour:
     - {fileID: -1355898875, guid: 05df36c5ccca24e41a662b6a0fffbc83, type: 3}
     - {fileID: 577043389, guid: 05df36c5ccca24e41a662b6a0fffbc83, type: 3}
     g_oItemRainbow: {fileID: 21300000, guid: 96f73e02d993c2246906be70004fff70, type: 3}
+    g_oObstacleNull: {fileID: 21300000, guid: 72528c3b4b0a7514a8a411e41e2c219a, type: 3}
+    g_oObstacleLocker: {fileID: 21300000, guid: c149645d0a3bfe84190f4c568ac596f5, type: 3}
 --- !u!1 &660826114
 GameObject:
   m_ObjectHideFlags: 0

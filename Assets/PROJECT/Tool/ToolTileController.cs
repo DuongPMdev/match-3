@@ -46,6 +46,7 @@ public class ToolTileController : MonoBehaviour {
 
     public void SetObstacleModel(ObstacleModel p_oObstacleModel) {
         GameObject _goObstacle = Instantiate(s_goPrefabObstacle, s_tfObstacleContainer.position, Quaternion.identity, s_tfObstacleContainer);
+        _goObstacle.GetComponent<ToolObstacleController>().SetObstacleModel(p_oObstacleModel);
     }
     #endregion
 
