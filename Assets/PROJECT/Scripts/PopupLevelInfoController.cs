@@ -18,6 +18,10 @@ public class PopupLevelInfoController : MonoBehaviour {
     private Animator s_oPopupAnimator;
     [SerializeField]
     private TMP_Text s_uiLabelLevel;
+    [SerializeField]
+    private GameObject s_goButtonPlay;
+    [SerializeField]
+    private GameObject s_goButtonCannotPlay;
     #endregion
 
     #region Variables
@@ -37,6 +41,16 @@ public class PopupLevelInfoController : MonoBehaviour {
 
     private void LoadUIs() {
         s_uiLabelLevel.text = "LEVEL " + m_nLevel.ToString();
+
+        int _nUnlockedLevel = PlayerPrefs.GetInt("unlocked_level", 1);
+        if (m_nLevel > _nUnlockedLevel) {
+            s_goButtonPlay.SetActive(false);
+            s_goButtonCannotPlay.SetActive(true);
+        }
+        else {
+            s_goButtonPlay.SetActive(true);
+            s_goButtonCannotPlay.SetActive(false);
+        }
     }
     #endregion
 
