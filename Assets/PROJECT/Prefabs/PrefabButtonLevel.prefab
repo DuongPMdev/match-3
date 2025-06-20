@@ -453,7 +453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 104e13c1508f17c4f9587a04dbb65925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  s_goPrefabLevelPointer: {fileID: 8776234583726058949, guid: 4c05ef437db4f464e98656a6ed16bde2, type: 3}
+  s_goPrefabButtonLevelPointer: {fileID: 8776234583726058949, guid: 4c05ef437db4f464e98656a6ed16bde2, type: 3}
   s_uiLabelLevel: {fileID: 8548755393945926787}
   s_goMapOn: {fileID: 3158066038953983919}
   s_goIconPlay: {fileID: 873589389331401704}

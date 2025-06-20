@@ -16,6 +16,7 @@ public class LobbySceneController : MonoBehaviour {
         PopupProfileController.Instance.Hide();
         PopupHeartController.Instance.Hide();
         PopupLevelInfoController.Instance.Hide();
+        PopupBananaSpinController.Instance.Hide();
     }
     #endregion
 

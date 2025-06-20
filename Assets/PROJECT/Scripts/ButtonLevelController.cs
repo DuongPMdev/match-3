@@ -8,7 +8,7 @@ public class ButtonLevelController : MonoBehaviour {
     #region Prefabs
     [Header("Prefabs")]
     [SerializeField]
-    private GameObject s_goPrefabLevelPointer;
+    private GameObject s_goPrefabButtonLevelPointer;
     #endregion
 
     #region Views
@@ -52,8 +52,8 @@ public class ButtonLevelController : MonoBehaviour {
             s_uiLabelLevel.color = s_oMapOnLabelColor;
             s_goIconPlay.SetActive(true);
             s_goMapOn.SetActive(true);
-            GameObject _goLevelPointer = Instantiate(s_goPrefabLevelPointer, transform.position, Quaternion.identity, transform);
-            _goLevelPointer.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+            GameObject _goButtonLevelPointer = Instantiate(s_goPrefabButtonLevelPointer, transform.position, Quaternion.identity, transform);
+            _goButtonLevelPointer.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
         }
         else {
             s_uiLabelLevel.font = s_oFontInactive;
