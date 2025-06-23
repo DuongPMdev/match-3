@@ -36,6 +36,10 @@ public class LobbySceneController : MonoBehaviour {
     public void OnClickButtonPlayLevel(int p_nLevel) {
         PopupLevelInfoController.Instance.Show(p_nLevel);
     }
+
+    public void OnClickButtonDailyReward() {
+        PopupDailyRewardController.Instance.Show();
+    }
     #endregion
 
 }

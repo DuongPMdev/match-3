@@ -24,6 +24,7 @@ public class FitSpriteToScreen : MonoBehaviour {
         float _fWorldScreenWidth = _fWorldScreenHeight * 390.0f / 700.0f;
 
         float _fScale = Mathf.Min(_fWorldScreenWidth / _fSpriteRendererWidth, _fWorldScreenHeight / _fSpriteRendererHeight);
+        _fScale = _fWorldScreenWidth / _fSpriteRendererWidth;
 
         transform.localScale = Vector3.one * _fScale;
     }
