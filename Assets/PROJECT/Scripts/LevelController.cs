@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class TilePair {
@@ -57,11 +58,18 @@ public class LevelController : MonoBehaviour {
     #region Views
     [Header("Views")]
     [SerializeField]
+    private Transform s_tfFieldMask;
+    [SerializeField]
     private Transform s_tfFieldStable;
     [SerializeField]
     private Transform s_tfTileContainer;
     [SerializeField]
     private Transform s_tfSelector;
+
+    [SerializeField]
+    private TMP_Text s_uiLabelMove;
+    [SerializeField]
+    private TMP_Text s_uiLabelTarget;
     #endregion
 
     #region Variables
@@ -81,6 +89,7 @@ public class LevelController : MonoBehaviour {
     private int m_nNumberCollectingPiece;
     private int m_nNumberCreatingItem;
     private int m_nNumberActivingItem;
+    private bool m_bIsGameOver;
 
     private enum STATE {
         IDLE,
@@ -110,6 +119,7 @@ public class LevelController : MonoBehaviour {
         m_nNumberCollectingPiece = 0;
         m_nNumberCreatingItem = 0;
         m_nNumberActivingItem = 0;
+        m_bIsGameOver = false;
 
         m_oState = STATE.IDLE;
     }
@@ -121,6 +131,10 @@ public class LevelController : MonoBehaviour {
     }
 
     private void Update() {
+        if (m_bIsGameOver == true) {
+            return;
+        }
+
         if (m_oState == STATE.IDLE) {
 
         }
@@ -128,6 +142,8 @@ public class LevelController : MonoBehaviour {
             if (IsMoving() == false) {
                 List<List<TileController>> _lListMatch = GetAllMergedMatch();
                 if (_lListMatch.Count > 0) {
+                    m_oLevelModel.move--;
+                    UpdateUI();
                     m_oState = STATE.MATCH;
                 }
                 else {
@@ -175,7 +191,7 @@ public class LevelController : MonoBehaviour {
             for (int x = 0; x < m_oLevelModel.size.x; x++) {
                 TileController _oTile = GetTileAt(new Vector2Int(x, m_oLevelModel.size.y - 1));
                 if (_oTile.IsEmpty() == true) {
-                    PieceModel _oPieceModel = new PieceModel(_oTile.GetPosition(), Random.Range(1, 7));
+                    PieceModel _oPieceModel = new PieceModel(_oTile.GetPosition(), Random.Range(1, ThemeController.Instance.GetMaxPieceValue()));
                     _oTile.FillUp(_oPieceModel);
                 }
             }
@@ -215,6 +231,14 @@ public class LevelController : MonoBehaviour {
             }
             else {
                 m_oState = STATE.IDLE;
+                if (m_oLevelModel.target == 0) {
+                    m_bIsGameOver = true;
+                    GameSceneController.Instance.OnClickButtonSetting();
+                }
+                else if (m_oLevelModel.move == 0) {
+                    m_bIsGameOver = true;
+                    GameSceneController.Instance.OnClickButtonSetting();
+                }
             }
         }
         else if (m_oState == STATE.COLLECT) {
@@ -259,6 +283,11 @@ public class LevelController : MonoBehaviour {
                 }
             }
         }
+    }
+
+    private void UpdateUI() {
+        s_uiLabelMove.text = m_oLevelModel.move.ToString();
+        s_uiLabelTarget.text = m_oLevelModel.target.ToString();
     }
 
     private void CollectMatch(List<TileController> p_lMatch) {
@@ -358,6 +387,14 @@ public class LevelController : MonoBehaviour {
         }
     }
 
+    public void OnCollectTarget() {
+        m_oLevelModel.target--;
+        if (m_oLevelModel.target < 0) {
+            m_oLevelModel.target = 0;
+        }
+        UpdateUI();
+    }
+
     public void OnMoveObstacleStart() {
         m_nNumberMovingObstacle++;
     }
@@ -429,12 +466,13 @@ public class LevelController : MonoBehaviour {
                 }
                 else {
                     if (_oTile.IsSamePosition(m_oSelectedTile) == true) {
-                        if (true) {
-                            if (m_oSelectedTile.IsSamePosition(_oTile) == true) {
-                                UseBoosterHammer(_oTile);
-                                m_oSelectedTile = null;
-                            }
-                        }
+                        //if (true) {
+                        //    if (m_oSelectedTile.IsSamePosition(_oTile) == true) {
+                        //        UseBoosterHammer(_oTile);
+                        //        m_oSelectedTile = null;
+                        //    }
+                        //}
+                        m_oSelectedTile = null;
                     }
                     else {
                         m_oSelectedTile = _oTile;
@@ -518,11 +556,12 @@ public class LevelController : MonoBehaviour {
     public void LoadLevel(LevelModel p_oLevelModel) {
         m_oLevelModel = p_oLevelModel;
 
-        float _fCameraSize = Mathf.Max(m_oLevelModel.size.x + 0.2f, 5.0f);
+        float _fCameraSize = Mathf.Max(m_oLevelModel.size.x + 0.5f, 5.0f);
         CameraController.Instance.SetCameraSize(_fCameraSize);
 
         ClearChild(s_tfTileContainer);
-        s_tfFieldStable.localScale = new Vector3(m_oLevelModel.size.x + 0.05f, m_oLevelModel.size.y + 0.05f, 1.0f);
+        s_tfFieldMask.localScale = new Vector3(m_oLevelModel.size.x + 0.1f, m_oLevelModel.size.y + 0.1f, 1.0f);
+        s_tfFieldStable.localScale = new Vector3(m_oLevelModel.size.x + 0.2f, m_oLevelModel.size.y + 0.2f, 1.0f) / 10.0f;
         s_tfTileContainer.localPosition = new Vector3((1 - m_oLevelModel.size.x) / 2.0f, (1 - m_oLevelModel.size.y) / 2.0f, 0.0f);
 
         m_arTile = new TileController[m_oLevelModel.size.x, m_oLevelModel.size.y];
@@ -557,6 +596,8 @@ public class LevelController : MonoBehaviour {
                 _oTile.CreateObstacle(_oObstacleModel);
             }
         }
+
+        UpdateUI();
     }
 
     public void AddActiveItem(int p_nPiece, ItemController p_oItem) {

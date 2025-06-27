@@ -37,6 +37,9 @@ public class ThemeController : MonoBehaviour {
     public Sprite GetPieceSprite(int p_nIndex) {
         return m_lTheme[m_nTheme].g_lPieceSprite[p_nIndex];
     }
+    public int GetMaxPieceValue() {
+        return m_lTheme[m_nTheme].g_lPieceSprite.Count;
+    }
 
     public Sprite GetItemSprite(int p_nPiece, string p_sType) {
         if (p_sType.Equals("rainbow") == true) {

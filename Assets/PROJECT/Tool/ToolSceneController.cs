@@ -30,6 +30,10 @@ public class ToolSceneController : MonoBehaviour {
     private TMP_InputField s_uiInputFieldLevelModelSizeX;
     [SerializeField]
     private TMP_InputField s_uiInputFieldLevelModelSizeY;
+    [SerializeField]
+    private TMP_InputField s_uiInputFieldLevelModelMove;
+    [SerializeField]
+    private TMP_InputField s_uiInputFieldLevelModelTarget;
 
     [Header("Views")]
     [SerializeField]
@@ -70,6 +74,12 @@ public class ToolSceneController : MonoBehaviour {
 
     private void SetSize(Vector2Int p_v2iSize) {
         m_oLevelModel.size = p_v2iSize;
+        LoadLevelModelToUI(true);
+    }
+
+    private void SetMoveAndTarget(int p_nMove, int p_nTarget) {
+        m_oLevelModel.move = p_nMove;
+        m_oLevelModel.target = p_nTarget;
         LoadLevelModelToUI(true);
     }
 
@@ -154,6 +164,8 @@ public class ToolSceneController : MonoBehaviour {
         s_uiInputFieldLevel.text = m_oLevelModel.level.ToString();
         s_uiInputFieldLevelModelSizeX.text = m_oLevelModel.size.x.ToString();
         s_uiInputFieldLevelModelSizeY.text = m_oLevelModel.size.y.ToString();
+        s_uiInputFieldLevelModelMove.text = m_oLevelModel.move.ToString();
+        s_uiInputFieldLevelModelTarget.text = m_oLevelModel.target.ToString();
 
         ClearChild(s_rtfField.transform);
         s_rtfField.sizeDelta = m_oLevelModel.size * 100;
@@ -228,6 +240,12 @@ public class ToolSceneController : MonoBehaviour {
         int _nSizeX = int.Parse(s_uiInputFieldLevelModelSizeX.text);
         int _nSizeY = int.Parse(s_uiInputFieldLevelModelSizeY.text);
         SetSize(new Vector2Int(_nSizeX, _nSizeY));
+    }
+
+    public void OnClickButtonSetMoveAndTarget() {
+        int _nMove = int.Parse(s_uiInputFieldLevelModelMove.text);
+        int _nTarget = int.Parse(s_uiInputFieldLevelModelTarget.text);
+        SetMoveAndTarget(_nMove, _nTarget);
     }
 
     public void OnClickButtonSetInitPiece(int p_nValue) {
