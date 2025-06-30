@@ -62,7 +62,8 @@ public class GameSceneController : MonoBehaviour {
 
     #region OnClickButtons
     public void OnClickButtonSetting() {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyScene");
+        PopupSettingController.Instance.Show();
+        //UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyScene");
     }
     #endregion
 

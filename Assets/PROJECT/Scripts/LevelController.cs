@@ -81,8 +81,6 @@ public class LevelController : MonoBehaviour {
     private List<ActivingItem> m_lActivingItem;
     private List<ActivingItem> m_lActivingItemTwice;
 
-    private bool m_bMainHandleThread;
-    private bool m_bIsUsingBoosterHammer;
     private int m_nNumberMovingObstacle;
     private int m_nNumberMovingItem;
     private int m_nNumberMovingPiece;
@@ -90,6 +88,11 @@ public class LevelController : MonoBehaviour {
     private int m_nNumberCreatingItem;
     private int m_nNumberActivingItem;
     private bool m_bIsGameOver;
+
+    private bool m_bIsUsingBoosterAperoad;
+    private bool m_bIsUsingBoosterBananaBomb;
+    private bool m_bIsUsingBoosterCombo;
+    private bool m_bIsUsingBoosterBarrelRoll;
 
     private enum STATE {
         IDLE,
@@ -111,8 +114,6 @@ public class LevelController : MonoBehaviour {
         m_lActivingItem = new List<ActivingItem>();
         m_lActivingItemTwice = new List<ActivingItem>();
 
-        m_bMainHandleThread = false;
-        m_bIsUsingBoosterHammer = false;
         m_nNumberMovingObstacle = 0;
         m_nNumberMovingItem = 0;
         m_nNumberMovingPiece = 0;
@@ -120,6 +121,11 @@ public class LevelController : MonoBehaviour {
         m_nNumberCreatingItem = 0;
         m_nNumberActivingItem = 0;
         m_bIsGameOver = false;
+
+        m_bIsUsingBoosterAperoad = false;
+        m_bIsUsingBoosterBananaBomb = false;
+        m_bIsUsingBoosterCombo = false;
+        m_bIsUsingBoosterBarrelRoll = false;
 
         m_oState = STATE.IDLE;
     }
@@ -231,13 +237,13 @@ public class LevelController : MonoBehaviour {
             }
             else {
                 m_oState = STATE.IDLE;
-                if (m_oLevelModel.target == 0) {
+                if (m_oLevelModel.target <= m_oLevelModel.collected) {
                     m_bIsGameOver = true;
-                    GameSceneController.Instance.OnClickButtonSetting();
+                    OnWinLevel();
                 }
                 else if (m_oLevelModel.move == 0) {
                     m_bIsGameOver = true;
-                    GameSceneController.Instance.OnClickButtonSetting();
+                    OnFailedLevel();
                 }
             }
         }
@@ -285,9 +291,19 @@ public class LevelController : MonoBehaviour {
         }
     }
 
+    private void OnWinLevel() {
+        PopupFinishLevel.Instance.Show(m_oLevelModel.target);
+    }
+
+    private void OnFailedLevel() {
+        PopupFinishLevel.Instance.Show(m_oLevelModel.target);
+    }
+
     private void UpdateUI() {
         s_uiLabelMove.text = m_oLevelModel.move.ToString();
-        s_uiLabelTarget.text = m_oLevelModel.target.ToString();
+        int _nTargetLeft = m_oLevelModel.target - m_oLevelModel.collected;
+        _nTargetLeft = Mathf.Clamp(_nTargetLeft, 0, m_oLevelModel.target);
+        s_uiLabelTarget.text = _nTargetLeft.ToString();
     }
 
     private void CollectMatch(List<TileController> p_lMatch) {
@@ -388,10 +404,7 @@ public class LevelController : MonoBehaviour {
     }
 
     public void OnCollectTarget() {
-        m_oLevelModel.target--;
-        if (m_oLevelModel.target < 0) {
-            m_oLevelModel.target = 0;
-        }
+        m_oLevelModel.collected++;
         UpdateUI();
     }
 
@@ -444,38 +457,49 @@ public class LevelController : MonoBehaviour {
     }
 
     private void OnPointerDown(Vector3 p_v3PointerPosition) {
-        if (IsMoving() == true || m_bIsUsingBoosterHammer == true || m_bMainHandleThread == true) {
+        if (IsMoving() == true || IsPopup() == true) {
             return;
         }
         
         Vector2Int _v2iSlotPosition = GetTilePosition(p_v3PointerPosition);
         TileController _oTile = GetTileAt(_v2iSlotPosition);
         if (_oTile != null) {
-            if (_oTile.IsMoveable() == false) {
-                return;
+            if (m_bIsUsingBoosterAperoad == true) {
+                OnUseBoosterAperoad(_oTile);
             }
-            if (m_oSelectedTile == null) {
-                m_oSelectedTile = _oTile;
+            else if (m_bIsUsingBoosterBananaBomb == true) {
+                OnUseBoosterBananaBomb(_oTile);
+            }
+            else if (m_bIsUsingBoosterBarrelRoll == true) {
+                OnUseBoosterBarrelRoll(_oTile);
             }
             else {
-                if (_oTile.IsNextTo(m_oSelectedTile) == true) {
-                    _oTile.SwapWith(m_oSelectedTile);
-                    m_oSwapingTilePair = new TilePair(_oTile, m_oSelectedTile);
-                    m_oState = STATE.SWAP;
-                    m_oSelectedTile = null;
+                if (_oTile.IsMoveable() == false) {
+                    return;
+                }
+                if (m_oSelectedTile == null) {
+                    m_oSelectedTile = _oTile;
                 }
                 else {
-                    if (_oTile.IsSamePosition(m_oSelectedTile) == true) {
-                        //if (true) {
-                        //    if (m_oSelectedTile.IsSamePosition(_oTile) == true) {
-                        //        UseBoosterHammer(_oTile);
-                        //        m_oSelectedTile = null;
-                        //    }
-                        //}
+                    if (_oTile.IsNextTo(m_oSelectedTile) == true) {
+                        _oTile.SwapWith(m_oSelectedTile);
+                        m_oSwapingTilePair = new TilePair(_oTile, m_oSelectedTile);
+                        m_oState = STATE.SWAP;
                         m_oSelectedTile = null;
                     }
                     else {
-                        m_oSelectedTile = _oTile;
+                        if (_oTile.IsSamePosition(m_oSelectedTile) == true) {
+                            //if (true) {
+                            //    if (m_oSelectedTile.IsSamePosition(_oTile) == true) {
+                            //        UseBoosterHammer(_oTile);
+                            //        m_oSelectedTile = null;
+                            //    }
+                            //}
+                            m_oSelectedTile = null;
+                        }
+                        else {
+                            m_oSelectedTile = _oTile;
+                        }
                     }
                 }
             }
@@ -490,7 +514,7 @@ public class LevelController : MonoBehaviour {
     }
 
     private void OnDrag(Vector3 p_v3PointerPosition) {
-        if (IsMoving() == true || m_bIsUsingBoosterHammer == true || m_bMainHandleThread == true) {
+        if (IsMoving() == true || IsPopup() == true) {
             return;
         }
         if (m_oSelectedTile == null) {
@@ -514,7 +538,7 @@ public class LevelController : MonoBehaviour {
     }
 
     private void OnPointerUp(Vector3 p_v3PointerPosition) {
-        if (IsMoving() == true || m_bIsUsingBoosterHammer == true || m_bMainHandleThread == true) {
+        if (IsMoving() == true || IsPopup() == true) {
             return;
         }
     }
@@ -530,6 +554,107 @@ public class LevelController : MonoBehaviour {
             return true;
         }
         return false;
+    }
+
+    public bool IsPopup() {
+        if (PopupIngameLoadingController.Instance.IsShowing() == true) {
+            return true;
+        }
+        if (PopupSettingController.Instance.IsShowing() == true) {
+            return true;
+        }
+        return false;
+    }
+
+    public void OnUseBoosterAperoad() {
+        m_oSelectedTile = null;
+        s_tfSelector.gameObject.SetActive(false);
+        m_bIsUsingBoosterAperoad = true;
+    }
+
+    public void OnCancelBoosterAperoad() {
+        m_bIsUsingBoosterAperoad = false;
+    }
+
+    private void OnUseBoosterAperoad(TileController p_oTile) {
+        int _nPieceValue = p_oTile.GetPieceValue();
+        
+        for (int x = 0; x < m_oLevelModel.size.x; x++) {
+            for (int y = 0; y < m_oLevelModel.size.y; y++) {
+                TileController _oTile = GetTileAt(new Vector2Int(x, y));
+                if (_oTile.GetPieceValue() == _nPieceValue) {
+                    _oTile.TakeDamage(_nPieceValue, 1);
+                }
+            }
+        }
+        m_oState = STATE.BOOSTER;
+
+        BoosterController.Instance.OnUseBoosterAperoad();
+    }
+
+    private void OnUseBoosterBananaBomb(TileController p_oTile) {
+        int _nRow = p_oTile.GetPosition().x;
+        int _nPieceValue = p_oTile.GetPieceValue();
+
+        for (int x = 0; x < m_oLevelModel.size.x; x++) {
+            TileController _oTile = GetTileAt(new Vector2Int(x, _nRow));
+            _oTile.TakeDamage(_nPieceValue, 1);
+        }
+        m_oState = STATE.BOOSTER;
+
+        BoosterController.Instance.OnUseBoosterBananaBomb();
+    }
+
+    private void OnUseBoosterBarrelRoll(TileController p_oTile) {
+        List<TileController> _lTile = new List<TileController>();
+
+        for (int x = 0; x < m_oLevelModel.size.x; x++) {
+            for (int y = 0; y < m_oLevelModel.size.y; y++) {
+                TileController _oTile = GetTileAt(new Vector2Int(x, y));
+                _lTile.Add(_oTile);
+            }
+        }
+        int _nShuffle = m_oLevelModel.size.x * m_oLevelModel.size.y;
+        for (int i = 0; i < _nShuffle; i++) {
+            int _nIndex = Random.Range(0, _lTile.Count);
+            _lTile.Add(_lTile[_nIndex]);
+            _lTile.RemoveAt(_nIndex);
+        }
+        while (_lTile.Count > 1) {
+            _lTile[0].SwapWith(_lTile[1]);
+            _lTile.RemoveAt(0);
+            _lTile.RemoveAt(0);
+        }
+        m_oState = STATE.BOOSTER;
+
+        BoosterController.Instance.OnUseBoosterBarrelRoll();
+    }
+
+    public void OnUseBoosterBananaBomb() {
+        m_oSelectedTile = null;
+        s_tfSelector.gameObject.SetActive(false);
+    }
+
+    public void OnCancelBoosterBananaBomb() {
+
+    }
+
+    public void OnUseBoosterCombo() {
+        m_oSelectedTile = null;
+        s_tfSelector.gameObject.SetActive(false);
+    }
+
+    public void OnCancelBoosterCombo() {
+
+    }
+
+    public void OnUseBoosterBarrelRoll() {
+        m_oSelectedTile = null;
+        s_tfSelector.gameObject.SetActive(false);
+    }
+
+    public void OnCancelBoosterBarrelRoll() {
+
     }
 
     public bool IsCollectingPiece() {
@@ -1006,20 +1131,6 @@ public class LevelController : MonoBehaviour {
         }
         yield return new WaitForSeconds((_lTileUpgraded.Count + 1) * 0.1f);
         OnActiveItemDone();
-    }
-
-    private void UseBoosterHammer(TileController p_oTile) {
-        StartCoroutine(UseBoosterHammerIE(p_oTile));
-    }
-
-    private IEnumerator UseBoosterHammerIE(TileController p_oTile) {
-        m_bIsUsingBoosterHammer = true;
-        yield return new WaitForSeconds(0.2f);
-        m_bIsUsingBoosterHammer = false;
-        if (p_oTile.IsNull() == false) {
-            p_oTile.TakeDamage(0, 1);
-        }
-        m_oState = STATE.BOOSTER;
     }
 
     private List<List<TileController>> GetAllMergedMatch() {

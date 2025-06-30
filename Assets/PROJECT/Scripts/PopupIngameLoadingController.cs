@@ -19,12 +19,12 @@ public class PopupIngameLoadingController : MonoBehaviour {
     #endregion
 
     #region Variables
-    private bool m_nIsShowing;
+    private bool m_bIsShowing;
     #endregion
 
     #region Functions
     private void LoadVariables() {
-        m_nIsShowing = true;
+        m_bIsShowing = true;
     }
 
     private void Start() {
@@ -32,13 +32,15 @@ public class PopupIngameLoadingController : MonoBehaviour {
     }
 
     public bool IsShowing() {
-        return m_nIsShowing;
+        return m_bIsShowing;
     }
 
     private IEnumerator HideIE() {
+        s_goCanvasGroup.alpha = 1.0f;
+        s_goCanvasGroup.interactable = true;
+        s_goCanvasGroup.blocksRaycasts = true;
         yield return new WaitForSeconds(1.0f);
 
-        
         float _fDuration = 0.5f;
         float _fElapsedTime = 0.0f;
         while (_fElapsedTime < _fDuration) {
@@ -50,7 +52,7 @@ public class PopupIngameLoadingController : MonoBehaviour {
         s_goCanvasGroup.alpha = 0.0f;
         s_goCanvasGroup.interactable = false;
         s_goCanvasGroup.blocksRaycasts = false;
-        m_nIsShowing = false;
+        m_bIsShowing = false;
     }
     #endregion
 

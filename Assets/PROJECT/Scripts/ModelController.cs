@@ -8,6 +8,7 @@ public class LevelModel {
     public int level;
     public int move;
     public int target;
+    public int collected;
     public Vector2Int size;
     public List<int> pieces;
 
