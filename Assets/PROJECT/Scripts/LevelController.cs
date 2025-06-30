@@ -589,6 +589,7 @@ public class LevelController : MonoBehaviour {
         }
         m_oState = STATE.BOOSTER;
 
+        m_bIsUsingBoosterAperoad = false;
         BoosterController.Instance.OnUseBoosterAperoad();
     }
 
@@ -602,6 +603,7 @@ public class LevelController : MonoBehaviour {
         }
         m_oState = STATE.BOOSTER;
 
+        m_bIsUsingBoosterBananaBomb = false;
         BoosterController.Instance.OnUseBoosterBananaBomb();
     }
 
@@ -627,6 +629,7 @@ public class LevelController : MonoBehaviour {
         }
         m_oState = STATE.BOOSTER;
 
+        m_bIsUsingBoosterBarrelRoll = false;
         BoosterController.Instance.OnUseBoosterBarrelRoll();
     }
 

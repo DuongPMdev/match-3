@@ -42,7 +42,7 @@ public class PopupWinLevel : MonoBehaviour {
 
     #region OnClickButtons
     public void OnClickButtonContinue() {
-
+        UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyScene");
     }
     #endregion
 
