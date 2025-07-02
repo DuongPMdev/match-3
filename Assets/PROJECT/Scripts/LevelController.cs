@@ -293,6 +293,7 @@ public class LevelController : MonoBehaviour {
 
     private void OnWinLevel() {
         PopupFinishLevel.Instance.Show(m_oLevelModel.target);
+        SettingsManager.Instance.PlaySound(SoundController.Instance.GetSoundLevelCompleted());
     }
 
     private void OnFailedLevel() {
@@ -489,12 +490,6 @@ public class LevelController : MonoBehaviour {
                     }
                     else {
                         if (_oTile.IsSamePosition(m_oSelectedTile) == true) {
-                            //if (true) {
-                            //    if (m_oSelectedTile.IsSamePosition(_oTile) == true) {
-                            //        UseBoosterHammer(_oTile);
-                            //        m_oSelectedTile = null;
-                            //    }
-                            //}
                             m_oSelectedTile = null;
                         }
                         else {
@@ -563,6 +558,12 @@ public class LevelController : MonoBehaviour {
         if (PopupSettingController.Instance.IsShowing() == true) {
             return true;
         }
+        if (PopupFinishLevel.Instance.IsShowing() == true) {
+            return true;
+        }
+        if (PopupWinLevel.Instance.IsShowing() == true) {
+            return true;
+        }
         return false;
     }
 
@@ -570,6 +571,7 @@ public class LevelController : MonoBehaviour {
         m_oSelectedTile = null;
         s_tfSelector.gameObject.SetActive(false);
         m_bIsUsingBoosterAperoad = true;
+        SettingsManager.Instance.PlaySound(SoundController.Instance.GetSoundAperoad());
     }
 
     public void OnCancelBoosterAperoad() {
@@ -593,8 +595,19 @@ public class LevelController : MonoBehaviour {
         BoosterController.Instance.OnUseBoosterAperoad();
     }
 
+    public void OnUseBoosterBananaBomb() {
+        m_oSelectedTile = null;
+        s_tfSelector.gameObject.SetActive(false);
+        m_bIsUsingBoosterBananaBomb = true;
+        SettingsManager.Instance.PlaySound(SoundController.Instance.GetSoundExplose());
+    }
+
+    public void OnCancelBoosterBananaBomb() {
+        m_bIsUsingBoosterBananaBomb = false;
+    }
+
     private void OnUseBoosterBananaBomb(TileController p_oTile) {
-        int _nRow = p_oTile.GetPosition().x;
+        int _nRow = p_oTile.GetPosition().y;
         int _nPieceValue = p_oTile.GetPieceValue();
 
         for (int x = 0; x < m_oLevelModel.size.x; x++) {
@@ -605,6 +618,27 @@ public class LevelController : MonoBehaviour {
 
         m_bIsUsingBoosterBananaBomb = false;
         BoosterController.Instance.OnUseBoosterBananaBomb();
+    }
+
+    public void OnUseBoosterCombo() {
+        m_oSelectedTile = null;
+        s_tfSelector.gameObject.SetActive(false);
+        m_bIsUsingBoosterCombo = true;
+    }
+
+    public void OnCancelBoosterCombo() {
+        m_bIsUsingBoosterCombo = false;
+    }
+
+    public void OnUseBoosterBarrelRoll() {
+        m_oSelectedTile = null;
+        s_tfSelector.gameObject.SetActive(false);
+        m_bIsUsingBoosterBarrelRoll = true;
+        SettingsManager.Instance.PlaySound(SoundController.Instance.GetSoundBarrelRoll());
+    }
+
+    public void OnCancelBoosterBarrelRoll() {
+        m_bIsUsingBoosterBarrelRoll = false;
     }
 
     private void OnUseBoosterBarrelRoll(TileController p_oTile) {
@@ -631,33 +665,6 @@ public class LevelController : MonoBehaviour {
 
         m_bIsUsingBoosterBarrelRoll = false;
         BoosterController.Instance.OnUseBoosterBarrelRoll();
-    }
-
-    public void OnUseBoosterBananaBomb() {
-        m_oSelectedTile = null;
-        s_tfSelector.gameObject.SetActive(false);
-    }
-
-    public void OnCancelBoosterBananaBomb() {
-
-    }
-
-    public void OnUseBoosterCombo() {
-        m_oSelectedTile = null;
-        s_tfSelector.gameObject.SetActive(false);
-    }
-
-    public void OnCancelBoosterCombo() {
-
-    }
-
-    public void OnUseBoosterBarrelRoll() {
-        m_oSelectedTile = null;
-        s_tfSelector.gameObject.SetActive(false);
-    }
-
-    public void OnCancelBoosterBarrelRoll() {
-
     }
 
     public bool IsCollectingPiece() {

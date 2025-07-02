@@ -94,6 +94,7 @@ namespace NGenAssets {
 			if (string.IsNullOrEmpty(s_sEventCommand) == false) {
 
 			}
+			SettingsManager.Instance.PlaySound(SoundController.Instance.GetSoundButtonClick());
 			m_oState = STATE.UPING;
 		}
 		#endregion

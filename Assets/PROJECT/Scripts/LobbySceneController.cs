@@ -20,6 +20,12 @@ public class LobbySceneController : MonoBehaviour {
     }
     #endregion
 
+    #region Functions
+    private void Start() {
+        SettingsManager.Instance.PlayMusic(SoundController.Instance.GetMusic());
+    }
+    #endregion
+
     #region OnClickButtons
     public void OnClickButtonSetting() {
         PopupSettingController.Instance.Show();

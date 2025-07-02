@@ -17,6 +17,8 @@ public class BoosterController : MonoBehaviour {
     #region Views
     [Header("Views")]
     [SerializeField]
+    private GameObject s_goBoosterBlur;
+    [SerializeField]
     private Transform s_tfButtonBoosterContainer;
     [SerializeField]
     private Transform s_tfPopupBoosterContainer;
@@ -82,6 +84,7 @@ public class BoosterController : MonoBehaviour {
     public void OnClickButtonBoosterAperoad() {
         if (m_lNumberBooster[0] > 0) {
             s_tfPopupBoosterContainer.GetChild(0).gameObject.SetActive(true);
+            s_goBoosterBlur.SetActive(true);
             LevelController.Instance.OnUseBoosterAperoad();
         }
     }
@@ -89,6 +92,7 @@ public class BoosterController : MonoBehaviour {
     public void OnClickButtonBoosterBananaBomb() {
         if (m_lNumberBooster[1] > 0) {
             s_tfPopupBoosterContainer.GetChild(1).gameObject.SetActive(true);
+            s_goBoosterBlur.SetActive(true);
             LevelController.Instance.OnUseBoosterBananaBomb();
         }
     }
@@ -97,6 +101,7 @@ public class BoosterController : MonoBehaviour {
         return;
         if (m_lNumberBooster[2] > 0) {
             s_tfPopupBoosterContainer.GetChild(2).gameObject.SetActive(true);
+            s_goBoosterBlur.SetActive(true);
             LevelController.Instance.OnUseBoosterCombo();
         }
     }
@@ -104,27 +109,32 @@ public class BoosterController : MonoBehaviour {
     public void OnClickButtonBoosterBarrelRoll() {
         if (m_lNumberBooster[3] > 0) {
             s_tfPopupBoosterContainer.GetChild(3).gameObject.SetActive(true);
+            s_goBoosterBlur.SetActive(true);
             LevelController.Instance.OnUseBoosterBarrelRoll();
         }
     }
 
     public void OnClickButtonCancelBoosterAperoad() {
         s_tfPopupBoosterContainer.GetChild(0).gameObject.SetActive(false);
+        s_goBoosterBlur.SetActive(false);
         LevelController.Instance.OnCancelBoosterAperoad();
     }
 
     public void OnClickButtonCancelBoosterBananaBomb() {
         s_tfPopupBoosterContainer.GetChild(1).gameObject.SetActive(false);
+        s_goBoosterBlur.SetActive(false);
         LevelController.Instance.OnCancelBoosterBananaBomb();
     }
 
     public void OnClickButtonCancelBoosterCombo() {
         s_tfPopupBoosterContainer.GetChild(2).gameObject.SetActive(false);
+        s_goBoosterBlur.SetActive(false);
         LevelController.Instance.OnCancelBoosterCombo();
     }
 
     public void OnClickButtonCancelBoosterBarrelRoll() {
         s_tfPopupBoosterContainer.GetChild(3).gameObject.SetActive(false);
+        s_goBoosterBlur.SetActive(false);
         LevelController.Instance.OnCancelBoosterBarrelRoll();
     }
     #endregion
