@@ -53,6 +53,7 @@ MonoBehaviour:
   s_goPrefabItem: {fileID: 3688661052297697205, guid: 4aed639f9f5df4240b7e9a876ed246ae, type: 3}
   s_goPrefabObstacle: {fileID: 3688661052297697205, guid: c9211c1e3f7679148b9b16efc49759aa, type: 3}
   s_goPrefabTakeDamageVFX: {fileID: 1557492176657030550, guid: 5b49aba075c92254ab1f0062b43fbdfb, type: 3}
+  s_goFooter: {fileID: 5856367435501690248}
   s_tfPieceContainer: {fileID: 1020023963584681651}
   s_tfItemContainer: {fileID: 8878005654408512112}
   s_tfObstacleContainer: {fileID: 4650748092840826865}

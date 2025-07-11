@@ -196,6 +196,12 @@ public class LevelController : MonoBehaviour {
 
             for (int x = 0; x < m_oLevelModel.size.x; x++) {
                 TileController _oTile = GetTileAt(new Vector2Int(x, m_oLevelModel.size.y - 1));
+                for (int y = m_oLevelModel.size.y - 1; y > 0; y--) {
+                    _oTile = GetTileAt(new Vector2Int(x, y));
+                    if (_oTile.IsNull() == false) {
+                        break;
+                    }
+                }
                 if (_oTile.IsEmpty() == true) {
                     PieceModel _oPieceModel = new PieceModel(_oTile.GetPosition(), Random.Range(1, ThemeController.Instance.GetMaxPieceValue()));
                     _oTile.FillUp(_oPieceModel);
@@ -229,6 +235,7 @@ public class LevelController : MonoBehaviour {
             List<List<TileController>> _lListMatch = GetAllMergedMatch();
             for (int i = 0; i < _lListMatch.Count; i++) {
                 List<TileController> _lMatch = _lListMatch[i];
+                AffectedAround(_lMatch);
                 CollectMatch(_lMatch);
             }
             ResetSpeed();
@@ -305,6 +312,21 @@ public class LevelController : MonoBehaviour {
         int _nTargetLeft = m_oLevelModel.target - m_oLevelModel.collected;
         _nTargetLeft = Mathf.Clamp(_nTargetLeft, 0, m_oLevelModel.target);
         s_uiLabelTarget.text = _nTargetLeft.ToString();
+    }
+
+    private void AffectedAround(List<TileController> p_lMatch) {
+        List<TileController> _lAround = new List<TileController>();
+        for (int i = 0; i < p_lMatch.Count; i++) {
+            List<TileController> _lAllNeighber = GetAllNeighber(p_lMatch[i]);
+            for (int ii = 0; ii < _lAllNeighber.Count; ii++) {
+                if (p_lMatch.Contains(_lAllNeighber[ii]) == false && _lAround.Contains(_lAllNeighber[ii]) == false) {
+                    _lAround.Add(_lAllNeighber[ii]);
+                }
+            }
+        }
+        for (int i = 0; i < _lAround.Count; i++) {
+            _lAround[i].Affected();
+        }
     }
 
     private void CollectMatch(List<TileController> p_lMatch) {
@@ -695,8 +717,6 @@ public class LevelController : MonoBehaviour {
         CameraController.Instance.SetCameraSize(_fCameraSize);
 
         ClearChild(s_tfTileContainer);
-        s_tfFieldMask.localScale = new Vector3(m_oLevelModel.size.x + 0.1f, m_oLevelModel.size.y + 0.1f, 1.0f);
-        s_tfFieldStable.localScale = new Vector3(m_oLevelModel.size.x + 0.2f, m_oLevelModel.size.y + 0.2f, 1.0f) / 10.0f;
         s_tfTileContainer.localPosition = new Vector3((1 - m_oLevelModel.size.x) / 2.0f, (1 - m_oLevelModel.size.y) / 2.0f, 0.0f);
 
         m_arTile = new TileController[m_oLevelModel.size.x, m_oLevelModel.size.y];

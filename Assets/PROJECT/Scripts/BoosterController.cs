@@ -59,24 +59,28 @@ public class BoosterController : MonoBehaviour {
         m_lNumberBooster[0]--;
         LoadUI();
         s_tfPopupBoosterContainer.GetChild(0).gameObject.SetActive(false);
+        s_goBoosterBlur.SetActive(false);
     }
 
     public void OnUseBoosterBananaBomb() {
         m_lNumberBooster[1]--;
         LoadUI();
         s_tfPopupBoosterContainer.GetChild(1).gameObject.SetActive(false);
+        s_goBoosterBlur.SetActive(false);
     }
 
     public void OnUseBoosterCombo() {
         m_lNumberBooster[2]--;
         LoadUI();
         s_tfPopupBoosterContainer.GetChild(2).gameObject.SetActive(false);
+        s_goBoosterBlur.SetActive(false);
     }
 
     public void OnUseBoosterBarrelRoll() {
         m_lNumberBooster[3]--;
         LoadUI();
         s_tfPopupBoosterContainer.GetChild(3).gameObject.SetActive(false);
+        s_goBoosterBlur.SetActive(false);
     }
     #endregion
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class LobbySceneController : MonoBehaviour {
@@ -10,6 +11,37 @@ public class LobbySceneController : MonoBehaviour {
         Instance = this;
         Application.targetFrameRate = 60;
     }
+    #endregion
+
+    #region Views
+    [Header("Views")]
+    [SerializeField]
+    private TMP_Text s_uiLabelDisplayName;
+    [SerializeField]
+    private TMP_Text s_uiLabelHeart;
+    [SerializeField]
+    private TMP_Text s_uiLabelCoin;
+    #endregion
+
+    #region Functions
+    private void Start() {
+        SettingsManager.Instance.PlayMusic(SoundController.Instance.GetMusic());
+        LoadDataToUI();
+    }
+
+    private void LoadDataToUI() {
+        TelegramUser _oTelegramUser = APIController.Instance.GetTelegramUser();
+        if (s_uiLabelDisplayName != null) {
+            s_uiLabelDisplayName.text = _oTelegramUser.first_name + " " + _oTelegramUser.last_name;
+        }
+        if (s_uiLabelHeart != null) {
+            s_uiLabelHeart.text = _oTelegramUser.lives.ToString();
+        }
+        if (s_uiLabelCoin != null) {
+            s_uiLabelCoin.text = _oTelegramUser.coins.ToString();
+        }
+
+    }
 
     public void HideAllPopup() {
         PopupSettingController.Instance.Hide();
@@ -17,12 +49,6 @@ public class LobbySceneController : MonoBehaviour {
         PopupHeartController.Instance.Hide();
         PopupLevelInfoController.Instance.Hide();
         PopupBananaSpinController.Instance.Hide();
-    }
-    #endregion
-
-    #region Functions
-    private void Start() {
-        SettingsManager.Instance.PlayMusic(SoundController.Instance.GetMusic());
     }
     #endregion
 

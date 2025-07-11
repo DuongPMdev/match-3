@@ -13,6 +13,7 @@ public class Theme {
     public Sprite g_oItemRainbow;
     public Sprite g_oObstacleNull;
     public Sprite g_oObstacleLocker;
+    public Sprite g_oObstacleWoodbox;
 
 }
 
@@ -63,6 +64,9 @@ public class ThemeController : MonoBehaviour {
         }
         else if (p_sType.Equals("locker") == true) {
             return m_lTheme[m_nTheme].g_oObstacleLocker;
+        }
+        else if (p_sType.Equals("woodbox") == true) {
+            return m_lTheme[m_nTheme].g_oObstacleWoodbox;
         }
         return null;
     }

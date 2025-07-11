@@ -20,6 +20,8 @@ public class TileController : MonoBehaviour {
     #region Views
     [Header("Views")]
     [SerializeField]
+    private GameObject s_goFooter;
+    [SerializeField]
     private Transform s_tfPieceContainer;
     [SerializeField]
     private Transform s_tfItemContainer;
@@ -130,6 +132,10 @@ public class TileController : MonoBehaviour {
         return m_oObstacle;
     }
 
+    public void ClearFooter() {
+        s_goFooter.SetActive(false);
+    }
+
     public bool IsMoving() {
         if (m_oObstacle != null) {
             return m_oObstacle.IsMoving();
@@ -157,13 +163,12 @@ public class TileController : MonoBehaviour {
             return false;
         }
         if (m_oObstacle != null) {
-            //if (m_oObstacle.IsNull() == true) {
-            //    return false;
-            //}
+            if (m_oObstacle.IsNull() == true) {
+                return false;
+            }
             //if (m_oObstacle.GetObstacleModel().type.Equals(ObstacleTypes.LOCKER) == true) {
             //    return false;
             //}
-            return false;
         }
         return true;
     }
@@ -348,6 +353,12 @@ public class TileController : MonoBehaviour {
             if (m_oObstacle.GetObstacleModel().type.Equals("") == true) {
 
             }
+        }
+    }
+
+    public void Affected() {
+        if (m_oObstacle != null) {
+            m_oObstacle.Affected();
         }
     }
 

@@ -15695,6 +15695,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c376476548dfac439cff5d8fa64802e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  s_uiLabelDisplayName: {fileID: 0}
+  s_uiLabelHeart: {fileID: 1474290599}
+  s_uiLabelCoin: {fileID: 479710144}
 --- !u!1 &864506639
 GameObject:
   m_ObjectHideFlags: 0

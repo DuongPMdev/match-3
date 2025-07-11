@@ -2,6 +2,11 @@ using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
+[System.Serializable]
+public class LaunchParams {
+    public string initData;
+}
+
 public class DeepLinkController : MonoBehaviour {
     
 	#region Singleton
@@ -26,17 +31,15 @@ public class DeepLinkController : MonoBehaviour {
     #endregion
 
     #region Functions
-    public string GetData() {
-        string _sAbsoluteURL = Application.absoluteURL;
-        string _sAbsoluteUri = "";
-        if (string.IsNullOrEmpty(_sAbsoluteURL) == false) {
-            Uri _oUri = new Uri(_sAbsoluteURL);
-            _sAbsoluteUri = _oUri.AbsoluteUri;
+    public string GetInitData() {
+        try {
+            string _sLaunchParams = GetLaunchParams();
+            LaunchParams _oLaunchParams = JsonUtility.FromJson<LaunchParams>(_sLaunchParams);
+            return _oLaunchParams.initData;
         }
-
-        string _sLaunchParams = GetLaunchParams();
-
-        return _sAbsoluteUri + "\n\n ===== \n\n" + _sLaunchParams;
+        catch (Exception p_oException) {
+            return "";
+        }
     }
     #endregion
 

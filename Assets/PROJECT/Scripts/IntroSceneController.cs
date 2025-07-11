@@ -5,17 +5,31 @@ using UnityEngine;
 
 public class IntroSceneController : MonoBehaviour {
 
+    #region Singleton
+    public static IntroSceneController Instance;
+    private void Awake() {
+        Instance = this;
+    }
+    #endregion
+
     #region Views
     [Header("Views")]
     [SerializeField]
-    private TMP_InputField s_uiInputFieldTest;
+    private GameObject s_goButtonPlay;
+    #endregion
+
+    #region Functions
+    private void Start() {
+        s_goButtonPlay.SetActive(false);
+    }
+
+    public void OnLoadedUserData() {
+        s_goButtonPlay.SetActive(true);
+    }
     #endregion
 
     #region OnClickButtons
     public void OnClickButtonPlay() {
-        string _sData = DeepLinkController.Instance.GetData();
-        Debug.Log(_sData);
-        //s_uiInputFieldTest.text = _sData;
         UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyScene");
     }
     #endregion

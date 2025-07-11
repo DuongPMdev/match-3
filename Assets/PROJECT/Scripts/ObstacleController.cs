@@ -6,6 +6,7 @@ public static class ObstacleTypes {
 
     public const string NULL = "null";
     public const string LOCKER = "locker";
+    public const string WOODBOX = "woodbox";
 
 }
 
@@ -43,6 +44,13 @@ public class ObstacleController : MonoBehaviour {
 
         Sprite _oObstacleSprite = ThemeController.Instance.GetObstacleSprite(p_oObstacleModel.type);
         s_uiObstacleSpriteRenderer.sprite = _oObstacleSprite;
+
+        if (m_oObstacleModel.type.Equals(ObstacleTypes.NULL) == true) {
+            s_uiObstacleSpriteRenderer.color = Color.clear;
+        }
+        else {
+            s_uiObstacleSpriteRenderer.color = Color.white;
+        }
     }
 
     public ObstacleModel GetObstacleModel() {
@@ -51,6 +59,9 @@ public class ObstacleController : MonoBehaviour {
 
     public void SetTile(TileController p_oTile) {
         m_oTile = p_oTile;
+        if (m_oObstacleModel.type.Equals(ObstacleTypes.NULL) == true) {
+            m_oTile.ClearFooter();
+        }
         m_oObstacleModel.position = m_oTile.GetPosition();
         if (transform.localPosition.magnitude > 0.1f) {
             StartCoroutine(MoveToZeroLocalPositionIE());
@@ -105,7 +116,16 @@ public class ObstacleController : MonoBehaviour {
         return false;
     }
 
+    public void Affected() {
+        if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX) == true) {
+            TakeDamage(1);
+        }
+    }
+
     public void TakeDamage(int p_nDamage) {
+        if (IsNull() == true) {
+            return;
+        }
         Break();
     }
 
