@@ -83,6 +83,10 @@ public class ItemController : MonoBehaviour {
         m_bIsActiveAfterMove = true;
     }
 
+    public void ActiveAfterMove() {
+        m_bIsActiveAfterMove = true;
+    }
+
     public ItemModel GetItemModel() {
         return m_oItemModel;
     }
@@ -112,6 +116,7 @@ public class ItemController : MonoBehaviour {
         }
         else {
             transform.localPosition = Vector3.zero;
+            m_oTile.ShowItemFooter();
         }
     }
 
@@ -148,6 +153,7 @@ public class ItemController : MonoBehaviour {
         if (m_bIsActiveAfterMove == true) {
             LevelController.Instance.AddActiveItem(m_oItemModel.piece, this);
         }
+        m_oTile.ShowItemFooter();
         LevelController.Instance.OnMoveItemDone();
         m_bIsMoving = false;
     }

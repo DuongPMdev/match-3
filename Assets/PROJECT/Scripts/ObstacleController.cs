@@ -7,6 +7,7 @@ public static class ObstacleTypes {
     public const string NULL = "null";
     public const string LOCKER = "locker";
     public const string WOODBOX = "woodbox";
+    public const string BUSH = "bush";
 
 }
 
@@ -15,7 +16,11 @@ public class ObstacleController : MonoBehaviour {
     #region Views
     [Header("Views")]
     [SerializeField]
-    private SpriteRenderer s_uiObstacleSpriteRenderer;
+    private GameObject s_goLocker;
+    [SerializeField]
+    private GameObject s_goWoodbox;
+    [SerializeField]
+    private GameObject s_goBush;
     #endregion
 
     #region Variables
@@ -42,14 +47,14 @@ public class ObstacleController : MonoBehaviour {
     public void SetObstacleModel(ObstacleModel p_oObstacleModel) {
         m_oObstacleModel = p_oObstacleModel;
 
-        Sprite _oObstacleSprite = ThemeController.Instance.GetObstacleSprite(p_oObstacleModel.type);
-        s_uiObstacleSpriteRenderer.sprite = _oObstacleSprite;
-
-        if (m_oObstacleModel.type.Equals(ObstacleTypes.NULL) == true) {
-            s_uiObstacleSpriteRenderer.color = Color.clear;
+        if (m_oObstacleModel.type.Equals(ObstacleTypes.LOCKER) == true) {
+            s_goLocker.gameObject.SetActive(true);
         }
-        else {
-            s_uiObstacleSpriteRenderer.color = Color.white;
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX) == true) {
+            s_goWoodbox.gameObject.SetActive(true);
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.BUSH) == true) {
+            s_goBush.gameObject.SetActive(true);
         }
     }
 

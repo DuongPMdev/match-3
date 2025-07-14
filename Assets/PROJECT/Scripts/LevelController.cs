@@ -368,53 +368,62 @@ public class LevelController : MonoBehaviour {
     }
 
     private string GetCreatingItemType(List<TileController> p_lMatch) {
-        Dictionary<int, int> _dRowCounts = new Dictionary<int, int>();
-        Dictionary<int, int> _dColumnCounts = new Dictionary<int, int>();
+        if (p_lMatch.Count > 3) {
+            if (Random.Range(-100.0f, 100.0f) > 0.0f) {
+                return "clear_row";
+            }
+            else {
+                return "clear_column";
+            }
+        }
+        return "";
+        //Dictionary<int, int> _dRowCounts = new Dictionary<int, int>();
+        //Dictionary<int, int> _dColumnCounts = new Dictionary<int, int>();
         
-        for (int i = 0; i < p_lMatch.Count; i++) {
-            if (_dRowCounts.ContainsKey(p_lMatch[i].GetPosition().y)) {
-                _dRowCounts[p_lMatch[i].GetPosition().y]++;
-            }
-            else {
-                _dRowCounts[p_lMatch[i].GetPosition().y] = 1;
-            }
+        //for (int i = 0; i < p_lMatch.Count; i++) {
+        //    if (_dRowCounts.ContainsKey(p_lMatch[i].GetPosition().y)) {
+        //        _dRowCounts[p_lMatch[i].GetPosition().y]++;
+        //    }
+        //    else {
+        //        _dRowCounts[p_lMatch[i].GetPosition().y] = 1;
+        //    }
 
 
-            if (_dColumnCounts.ContainsKey(p_lMatch[i].GetPosition().x)) {
-                _dColumnCounts[p_lMatch[i].GetPosition().x]++;
-            }
-            else {
-                _dColumnCounts[p_lMatch[i].GetPosition().x] = 1;
-            }
-        }
+        //    if (_dColumnCounts.ContainsKey(p_lMatch[i].GetPosition().x)) {
+        //        _dColumnCounts[p_lMatch[i].GetPosition().x]++;
+        //    }
+        //    else {
+        //        _dColumnCounts[p_lMatch[i].GetPosition().x] = 1;
+        //    }
+        //}
 
-        int _nSameRowCount = 0;
-        int _nSameColumnCount = 0;
+        //int _nSameRowCount = 0;
+        //int _nSameColumnCount = 0;
 
-        foreach (var _oPair in _dRowCounts) {
-            if (_oPair.Value > 1) {
-                _nSameRowCount += _oPair.Value;
-            }
-        }
+        //foreach (var _oPair in _dRowCounts) {
+        //    if (_oPair.Value > 1) {
+        //        _nSameRowCount += _oPair.Value;
+        //    }
+        //}
 
-        foreach (var _oPair in _dColumnCounts) {
-            if (_oPair.Value > 1) {
-                _nSameColumnCount += _oPair.Value;
-            }
-        }
+        //foreach (var _oPair in _dColumnCounts) {
+        //    if (_oPair.Value > 1) {
+        //        _nSameColumnCount += _oPair.Value;
+        //    }
+        //}
 
-        if (_nSameRowCount >= 5 || _nSameColumnCount >= 5) {
-            return "rainbow";
-        }
-        else if (_nSameRowCount == 0) {
-            return "clear_row";
-        }
-        else if (_nSameColumnCount == 0) {
-            return "clear_column";
-        }
-        else {
-            return "bomb";
-        }
+        //if (_nSameRowCount >= 5 || _nSameColumnCount >= 5) {
+        //    return "rainbow";
+        //}
+        //else if (_nSameRowCount == 0) {
+        //    return "clear_row";
+        //}
+        //else if (_nSameColumnCount == 0) {
+        //    return "clear_column";
+        //}
+        //else {
+        //    return "bomb";
+        //}
     }
 
     private void ResetSpeed() {

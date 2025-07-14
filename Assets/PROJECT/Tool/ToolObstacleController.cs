@@ -11,10 +11,27 @@ public class ToolObstacleController : MonoBehaviour {
     private Image s_uiObstacleImage;
     #endregion
 
+    #region Views
+    [Header("Views")]
+    [SerializeField]
+    private GameObject s_goLocker;
+    [SerializeField]
+    private GameObject s_goWoodbox;
+    [SerializeField]
+    private GameObject s_goBush;
+    #endregion
+
     #region Functions
     public void SetObstacleModel(ObstacleModel p_oObstacleModel) {
-        Sprite _oObstacleSprite = ThemeController.Instance.GetObstacleSprite(p_oObstacleModel.type);
-        s_uiObstacleImage.sprite = _oObstacleSprite;
+        if (p_oObstacleModel.type.Equals(ObstacleTypes.LOCKER) == true) {
+            s_goLocker.gameObject.SetActive(true);
+        }
+        else if (p_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX) == true) {
+            s_goWoodbox.gameObject.SetActive(true);
+        }
+        else if (p_oObstacleModel.type.Equals(ObstacleTypes.BUSH) == true) {
+            s_goBush.gameObject.SetActive(true);
+        }
     }
     #endregion
 

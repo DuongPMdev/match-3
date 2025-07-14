@@ -42,6 +42,7 @@ public class PopupWinLevel : MonoBehaviour {
 
     #region OnClickButtons
     public void OnClickButtonContinue() {
+        APIController.Instance.SubmitGame(95, 7000);
         UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyScene");
     }
     #endregion

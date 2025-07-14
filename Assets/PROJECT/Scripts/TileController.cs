@@ -22,6 +22,8 @@ public class TileController : MonoBehaviour {
     [SerializeField]
     private GameObject s_goFooter;
     [SerializeField]
+    private GameObject s_goItemFooter;
+    [SerializeField]
     private Transform s_tfPieceContainer;
     [SerializeField]
     private Transform s_tfItemContainer;
@@ -82,9 +84,9 @@ public class TileController : MonoBehaviour {
 
     public void CreateItem(ItemModel p_oItemModel) {
         GameObject _goItem = Instantiate(s_goPrefabItem, s_tfItemContainer.position, Quaternion.identity, s_tfItemContainer);
-        _goItem.GetComponent<ItemController>().SetItemModel(p_oItemModel);
-        _goItem.GetComponent<ItemController>().SetTile(this);
         m_oItem = _goItem.GetComponent<ItemController>();
+        m_oItem.SetItemModel(p_oItemModel);
+        m_oItem.SetTile(this);
     }
 
     public void SetItem(ItemController p_oItem) {
@@ -92,6 +94,9 @@ public class TileController : MonoBehaviour {
         if (m_oItem != null) {
             m_oItem.transform.parent = s_tfItemContainer;
             m_oItem.SetTile(this);
+        }
+        else {
+            s_goItemFooter.SetActive(false);
         }
     }
 
@@ -111,6 +116,16 @@ public class TileController : MonoBehaviour {
 
     public ItemController GetItem() {
         return m_oItem;
+    }
+
+    public void ShowItemFooter() {
+        if (m_oItem != null) {
+            s_goItemFooter.SetActive(true);
+            s_goItemFooter.GetComponent<SpriteRenderer>().sprite = ThemeController.Instance.GetItemFooter(m_oItem.GetItemModel().piece);
+        }
+        else {
+            s_goItemFooter.SetActive(false);
+        }
     }
 
     public void CreateObstacle(ObstacleModel p_oObstacleModel) {
@@ -192,21 +207,21 @@ public class TileController : MonoBehaviour {
                 return true;
             }
         }
-        if (m_oPiece != null && p_oTile.GetItem() != null) {
-            if (m_oPiece.GetPieceModel().piece == p_oTile.GetItem().GetItemModel().piece) {
-                return true;
-            }
-        }
-        if (m_oItem != null && p_oTile.GetPiece() != null) {
-            if (m_oItem.GetItemModel().piece == p_oTile.GetPiece().GetPieceModel().piece) {
-                return true;
-            }
-        }
-        if (m_oItem != null && p_oTile.GetItem() != null) {
-            if (m_oItem.GetItemModel().piece == p_oTile.GetItem().GetItemModel().piece) {
-                return true;
-            }
-        }
+        //if (m_oPiece != null && p_oTile.GetItem() != null) {
+        //    if (m_oPiece.GetPieceModel().piece == p_oTile.GetItem().GetItemModel().piece) {
+        //        return true;
+        //    }
+        //}
+        //if (m_oItem != null && p_oTile.GetPiece() != null) {
+        //    if (m_oItem.GetItemModel().piece == p_oTile.GetPiece().GetPieceModel().piece) {
+        //        return true;
+        //    }
+        //}
+        //if (m_oItem != null && p_oTile.GetItem() != null) {
+        //    if (m_oItem.GetItemModel().piece == p_oTile.GetItem().GetItemModel().piece) {
+        //        return true;
+        //    }
+        //}
         return false;
     }
 
@@ -218,6 +233,7 @@ public class TileController : MonoBehaviour {
         if (m_oItem != null) {
             p_oTile.SetItem(m_oItem);
             m_oItem = null;
+            s_goItemFooter.SetActive(false);
         }
         if (m_oPiece != null) {
             p_oTile.SetPiece(m_oPiece);
@@ -226,6 +242,9 @@ public class TileController : MonoBehaviour {
     }
 
     public void SwapWith(TileController p_oTile) {
+        if (m_oObstacle != null || p_oTile.GetObstacle() != null) {
+            return;
+        }
         int _nNumberItem = 0;
         int _nNumberRainbowItem = 0;
         int _nNumberBombItem = 0;
@@ -300,6 +319,18 @@ public class TileController : MonoBehaviour {
                     p_oTile.GetItem().SetPiece(m_oPiece.GetPieceModel().piece);
                 }
             }
+            else if (_nNumberItem == 1) {
+                if (m_oItem != null && p_oTile.GetPiece() != null) {
+                    if (m_oItem.GetItemModel().piece == p_oTile.GetPiece().GetPieceModel().piece) {
+                        m_oItem.ActiveAfterMove();
+                    }
+                }
+                if (m_oPiece != null && p_oTile.GetItem() != null) {
+                    if (p_oTile.GetItem().GetItemModel().piece == m_oPiece.GetPieceModel().piece) {
+                        p_oTile.GetItem().ActiveAfterMove();
+                    }
+                }
+            }
         }
     }
 
@@ -350,8 +381,11 @@ public class TileController : MonoBehaviour {
 
     public void OnMatchAround() {
         if (m_oObstacle != null) {
-            if (m_oObstacle.GetObstacleModel().type.Equals("") == true) {
-
+            if (m_oObstacle.GetObstacleModel().type.Equals("woodbox") == true) {
+                m_oObstacle.Break();
+            }
+            if (m_oObstacle.GetObstacleModel().type.Equals("bush") == true) {
+                m_oObstacle.Break();
             }
         }
     }
@@ -388,6 +422,7 @@ public class TileController : MonoBehaviour {
 
     public void RemoveItem() {
         m_oItem = null;
+        s_goItemFooter.SetActive(false);
     }
 
     public void RemoveObstacle() {
@@ -403,6 +438,7 @@ public class TileController : MonoBehaviour {
     public void DestroyItem() {
         Destroy(m_oItem.gameObject);
         m_oItem = null;
+        s_goItemFooter.SetActive(false);
     }
 
     public bool IsSamePosition(TileController p_oTile) {
