@@ -27,6 +27,10 @@ public class SoundController : MonoBehaviour {
     private AudioClip s_oSoundKongMode;
     [SerializeField]
     private AudioClip s_oSoundBarrelRoll;
+    [SerializeField]
+    private AudioClip s_oSoundBreakWoodbox;
+    [SerializeField]
+    private AudioClip s_oSoundBreakCrystal;
     #endregion
 
     #region Functions
@@ -56,6 +60,14 @@ public class SoundController : MonoBehaviour {
 
     public AudioClip GetSoundBarrelRoll() {
         return s_oSoundBarrelRoll;
+    }
+
+    public AudioClip GetSoundBreakWoodbox() {
+        return s_oSoundBreakWoodbox;
+    }
+
+    public AudioClip GetSoundBreakCrystal() {
+        return s_oSoundBreakCrystal;
     }
     #endregion
 

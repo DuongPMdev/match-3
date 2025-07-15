@@ -6,11 +6,11 @@ using System;
 public class LevelModel {
 
     public int level;
+    public int map;
     public int move;
-    public int target;
-    public int collected;
     public Vector2Int size;
-    public List<int> pieces;
+    public List<int> pieces; 
+    public List<TargetModel> targets;
 
     public List<PieceModel> init_piece;
     public List<ItemModel> init_item;
@@ -21,9 +21,27 @@ public class LevelModel {
         size = p_v2iSize;
         pieces = new List<int>();
 
+        targets = new List<TargetModel>();
         init_piece = new List<PieceModel>();
         init_item = new List<ItemModel>();
         init_obstacle = new List<ObstacleModel>();
+    }
+
+}
+
+[Serializable]
+public class TargetModel {
+
+    public string type;
+    public int value;
+    public int request_amount;
+    public int collected;
+
+    public TargetModel(string p_stype, int p_nValue, int p_nRequestAmount) {
+        type = p_stype;
+        value = p_nValue;
+        request_amount = p_nRequestAmount;
+        collected = 0;
     }
 
 }

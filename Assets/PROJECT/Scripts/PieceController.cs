@@ -109,9 +109,7 @@ public class PieceController : MonoBehaviour {
             yield return null;
         }
         yield return new WaitForSeconds(0.1f);
-        if (m_oPieceModel.piece == 1) {
-            LevelController.Instance.OnCollectTarget();
-        }
+        LevelController.Instance.OnCollectTarget("piece", m_oPieceModel.piece);
         LevelController.Instance.OnCollectPieceDone();
 
         Destroy(gameObject);

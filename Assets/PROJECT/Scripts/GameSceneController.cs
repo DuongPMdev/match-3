@@ -53,7 +53,9 @@ public class GameSceneController : MonoBehaviour {
             string _sJSONData = _oTextAsset.text;
             LevelModel _oLevelModel = JsonUtility.FromJson<LevelModel>(_sJSONData);
             LevelController.Instance.LoadLevel(_oLevelModel);
-            APIController.Instance.StartGame(_nLevel);
+            if (APIController.Instance != null) {
+                APIController.Instance.StartGame(_nLevel);
+            }
         }
         else {
             UnityEngine.SceneManagement.SceneManager.LoadScene("ToolScene");

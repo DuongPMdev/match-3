@@ -19,6 +19,10 @@ public class ToolObstacleController : MonoBehaviour {
     private GameObject s_goWoodbox;
     [SerializeField]
     private GameObject s_goBush;
+    [SerializeField]
+    private GameObject s_goBlueCrystal;
+    [SerializeField]
+    private GameObject s_goRedCrystal;
     #endregion
 
     #region Functions
@@ -31,6 +35,12 @@ public class ToolObstacleController : MonoBehaviour {
         }
         else if (p_oObstacleModel.type.Equals(ObstacleTypes.BUSH) == true) {
             s_goBush.gameObject.SetActive(true);
+        }
+        else if (p_oObstacleModel.type.Equals(ObstacleTypes.BLUE_CRYSTAL) == true) {
+            s_goBlueCrystal.gameObject.SetActive(true);
+        }
+        else if (p_oObstacleModel.type.Equals(ObstacleTypes.RED_CRYSTAL) == true) {
+            s_goRedCrystal.gameObject.SetActive(true);
         }
     }
     #endregion

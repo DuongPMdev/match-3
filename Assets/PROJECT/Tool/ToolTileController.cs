@@ -17,6 +17,8 @@ public class ToolTileController : MonoBehaviour {
     #region Views
     [Header("Views")]
     [SerializeField]
+    private GameObject s_goFooter;
+    [SerializeField]
     private Transform s_tfPieceContainer;
     [SerializeField]
     private Transform s_tfItemContainer;
@@ -45,6 +47,7 @@ public class ToolTileController : MonoBehaviour {
     }
 
     public void SetObstacleModel(ObstacleModel p_oObstacleModel) {
+        s_goFooter.SetActive(p_oObstacleModel.type.Equals(ObstacleTypes.NULL) == false);
         GameObject _goObstacle = Instantiate(s_goPrefabObstacle, s_tfObstacleContainer.position, Quaternion.identity, s_tfObstacleContainer);
         _goObstacle.GetComponent<ToolObstacleController>().SetObstacleModel(p_oObstacleModel);
     }

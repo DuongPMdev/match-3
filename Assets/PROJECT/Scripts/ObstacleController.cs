@@ -7,20 +7,45 @@ public static class ObstacleTypes {
     public const string NULL = "null";
     public const string LOCKER = "locker";
     public const string WOODBOX = "woodbox";
+    public const string WOODBOX_HARD = "woodbox_hard";
     public const string BUSH = "bush";
+    public const string BLUE_CRYSTAL = "blue_crystal";
+    public const string RED_CRYSTAL = "red_crystal";
 
 }
 
 public class ObstacleController : MonoBehaviour {
-    
+
+    #region Prefabs
+    [Header("Prefabs")]
+    [SerializeField]
+    private GameObject s_goPrefabBreakLocker;
+    [SerializeField]
+    private GameObject s_goPrefabBreakWoodbox;
+    [SerializeField]
+    private GameObject s_goPrefabBreakBush;
+    [SerializeField]
+    private GameObject s_goPrefabBreakBlueCrystal;
+    [SerializeField]
+    private GameObject s_goPrefabBreakRedCrystal;
+    #endregion
+
     #region Views
     [Header("Views")]
+    [SerializeField]
+    private GameObject s_goCrack;
     [SerializeField]
     private GameObject s_goLocker;
     [SerializeField]
     private GameObject s_goWoodbox;
     [SerializeField]
+    private GameObject s_goWoodboxHard;
+    [SerializeField]
     private GameObject s_goBush;
+    [SerializeField]
+    private GameObject s_goBlueCrystal;
+    [SerializeField]
+    private GameObject s_goRedCrystal;
     #endregion
 
     #region Variables
@@ -33,6 +58,7 @@ public class ObstacleController : MonoBehaviour {
     public float m_fCurrentSpeed;
 
     private bool m_bIsMoving;
+    private int m_nHealth;
     #endregion
 
     #region Functions
@@ -49,13 +75,72 @@ public class ObstacleController : MonoBehaviour {
 
         if (m_oObstacleModel.type.Equals(ObstacleTypes.LOCKER) == true) {
             s_goLocker.gameObject.SetActive(true);
+            m_nHealth = 1;
         }
         else if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX) == true) {
             s_goWoodbox.gameObject.SetActive(true);
+            m_nHealth = 1;
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX_HARD) == true) {
+            s_goWoodboxHard.gameObject.SetActive(true);
+            m_nHealth = 1;
         }
         else if (m_oObstacleModel.type.Equals(ObstacleTypes.BUSH) == true) {
             s_goBush.gameObject.SetActive(true);
+            m_nHealth = 1;
         }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.BLUE_CRYSTAL) == true) {
+            s_goBlueCrystal.gameObject.SetActive(true);
+            m_nHealth = 2;
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.RED_CRYSTAL) == true) {
+            s_goRedCrystal.gameObject.SetActive(true);
+            m_nHealth = 2;
+        }
+    }
+
+    private GameObject GetPrefabBreak() {
+        if (m_oObstacleModel.type.Equals(ObstacleTypes.LOCKER) == true) {
+            return s_goPrefabBreakLocker;
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX) == true) {
+            return s_goPrefabBreakWoodbox;
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX_HARD) == true) {
+            return s_goPrefabBreakWoodbox;
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.BUSH) == true) {
+            return s_goPrefabBreakBush;
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.BLUE_CRYSTAL) == true) {
+            return s_goPrefabBreakBlueCrystal;
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.RED_CRYSTAL) == true) {
+            return s_goPrefabBreakRedCrystal;
+        }
+        return null;
+    }
+
+    private AudioClip GetBreakSound() {
+        if (m_oObstacleModel.type.Equals(ObstacleTypes.LOCKER) == true) {
+
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX) == true) {
+            return SoundController.Instance.GetSoundBreakWoodbox();
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX_HARD) == true) {
+            return SoundController.Instance.GetSoundBreakWoodbox();
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.BUSH) == true) {
+
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.BLUE_CRYSTAL) == true) {
+            return SoundController.Instance.GetSoundBreakCrystal();
+        }
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.RED_CRYSTAL) == true) {
+            return SoundController.Instance.GetSoundBreakCrystal();
+        }
+        return null;
     }
 
     public ObstacleModel GetObstacleModel() {
@@ -122,7 +207,22 @@ public class ObstacleController : MonoBehaviour {
     }
 
     public void Affected() {
+        if (m_oObstacleModel.type.Equals(ObstacleTypes.LOCKER) == true) {
+            TakeDamage(1);
+        }
+        if (m_oObstacleModel.type.Equals(ObstacleTypes.BUSH) == true) {
+            TakeDamage(1);
+        }
         if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX) == true) {
+            TakeDamage(1);
+        }
+        if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX_HARD) == true) {
+            TakeDamage(1);
+        }
+        if (m_oObstacleModel.type.Equals(ObstacleTypes.BLUE_CRYSTAL) == true) {
+            TakeDamage(1);
+        }
+        if (m_oObstacleModel.type.Equals(ObstacleTypes.RED_CRYSTAL) == true) {
             TakeDamage(1);
         }
     }
@@ -131,27 +231,59 @@ public class ObstacleController : MonoBehaviour {
         if (IsNull() == true) {
             return;
         }
-        Break();
+        m_nHealth -= p_nDamage;
+        AudioClip _oSoundBreak = GetBreakSound();
+        if (_oSoundBreak != null) {
+            SettingsManager.Instance.PlaySound(_oSoundBreak);
+        }
+        if (m_nHealth <= 0) {
+            Break();
+        }
+        else {
+            s_goCrack.SetActive(true);
+            GameObject _goPrefabBreak = GetPrefabBreak();
+            if (_goPrefabBreak != null) {
+                GameObject _goBreak = Instantiate(_goPrefabBreak, transform.position, Quaternion.identity, transform);
+                Destroy(_goBreak, 1.0f);
+            }
+        }
     }
 
-    public void Break() {
+    private void Break() {
         StartCoroutine(BreakIE());
     }
 
     private IEnumerator BreakIE() {
         //LevelController.Instance.OnBreakObstacleStart();
         m_oTile.RemoveObstacle();
+        LevelController.Instance.OnCollectTarget(m_oObstacleModel.type, 0);
 
-        float _fDuration = 0.2f;
-        float _fElapsedTime = 0.0f;
-        while (_fElapsedTime < _fDuration) {
-            float _fProceed = _fElapsedTime / _fDuration;
-            transform.localScale = Vector3.one * (1.0f - _fProceed);
+        s_goCrack.SetActive(false);
 
-            _fElapsedTime += Time.deltaTime;
-            yield return null;
+        GameObject _goPrefabBreak = GetPrefabBreak();
+        if (_goPrefabBreak != null) {
+            s_goCrack.SetActive(false);
+            s_goLocker.SetActive(false);
+            s_goWoodbox.SetActive(false);
+            s_goBush.SetActive(false);
+            s_goBlueCrystal.SetActive(false);
+            s_goRedCrystal.SetActive(false);
+            GameObject _goBreak = Instantiate(_goPrefabBreak, transform.position, Quaternion.identity, transform);
+            Destroy(_goBreak, 1.0f);
+            yield return new WaitForSeconds(1.0f);
         }
-        yield return new WaitForSeconds(0.1f);
+        else {
+            float _fDuration = 0.2f;
+            float _fElapsedTime = 0.0f;
+            while (_fElapsedTime < _fDuration) {
+                float _fProceed = _fElapsedTime / _fDuration;
+                transform.localScale = Vector3.one * (1.0f - _fProceed);
+
+                _fElapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
 
         Destroy(gameObject);
         //LevelController.Instance.OnBreakObstacleDone();

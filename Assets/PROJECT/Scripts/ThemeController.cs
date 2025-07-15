@@ -6,6 +6,7 @@ using System;
 [Serializable]
 public class Theme {
 
+    public List<Sprite> g_lMapStable;
     public List<Sprite> g_lPieceSprite;
     public List<Sprite> g_lItemBombSprite;
     public List<Sprite> g_lItemClearColumnSprite;
@@ -72,6 +73,13 @@ public class ThemeController : MonoBehaviour {
         }
         else if (p_sType.Equals("woodbox") == true) {
             return m_lTheme[m_nTheme].g_oObstacleWoodbox;
+        }
+        return null;
+    }
+
+    public Sprite GetMapStable(int p_nMap) {
+        if (0 < p_nMap && p_nMap < m_lTheme[m_nTheme].g_lMapStable.Count) {
+            return m_lTheme[m_nTheme].g_lMapStable[p_nMap];
         }
         return null;
     }

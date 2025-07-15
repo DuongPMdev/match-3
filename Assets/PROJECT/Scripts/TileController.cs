@@ -369,8 +369,8 @@ public class TileController : MonoBehaviour {
         }
         if (m_oPiece != null) {
             if (m_oObstacle != null) {
-                if (m_oObstacle.GetObstacleModel().type.Equals("locker") == true) {
-                    m_oObstacle.Break();
+                if (m_oObstacle.GetObstacleModel().type.Equals(ObstacleTypes.LOCKER) == true) {
+                    m_oObstacle.TakeDamage(1);
                 }
             }
             else {
@@ -381,11 +381,17 @@ public class TileController : MonoBehaviour {
 
     public void OnMatchAround() {
         if (m_oObstacle != null) {
-            if (m_oObstacle.GetObstacleModel().type.Equals("woodbox") == true) {
-                m_oObstacle.Break();
+            if (m_oObstacle.GetObstacleModel().type.Equals(ObstacleTypes.WOODBOX) == true) {
+                m_oObstacle.TakeDamage(1);
             }
-            if (m_oObstacle.GetObstacleModel().type.Equals("bush") == true) {
-                m_oObstacle.Break();
+            else if (m_oObstacle.GetObstacleModel().type.Equals(ObstacleTypes.BUSH) == true) {
+                m_oObstacle.TakeDamage(1);
+            }
+            else if (m_oObstacle.GetObstacleModel().type.Equals(ObstacleTypes.BLUE_CRYSTAL) == true) {
+                m_oObstacle.TakeDamage(1);
+            }
+            else if (m_oObstacle.GetObstacleModel().type.Equals(ObstacleTypes.RED_CRYSTAL) == true) {
+                m_oObstacle.TakeDamage(1);
             }
         }
     }
@@ -398,7 +404,7 @@ public class TileController : MonoBehaviour {
 
     public void TakeDamage(int p_nPiece, int p_nDamage) {
         GameObject _goTakeDamageVFX = Instantiate(s_goPrefabTakeDamageVFX, s_tfVFXContainer.position, Quaternion.identity, s_tfVFXContainer);
-        Destroy(_goTakeDamageVFX, 0.3f);
+        Destroy(_goTakeDamageVFX, 1.2f);
 
         if (m_oObstacle != null) {
             m_oObstacle.TakeDamage(p_nDamage);

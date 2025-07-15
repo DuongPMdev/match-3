@@ -53,6 +53,8 @@ public class LevelController : MonoBehaviour {
     [Header("Prefabs")]
     [SerializeField]
     private GameObject s_goPrefabTile;
+    [SerializeField]
+    private GameObject s_goPrefabTaget;
     #endregion
 
     #region Views
@@ -69,7 +71,7 @@ public class LevelController : MonoBehaviour {
     [SerializeField]
     private TMP_Text s_uiLabelMove;
     [SerializeField]
-    private TMP_Text s_uiLabelTarget;
+    private Transform s_tfTargetContainer;
     #endregion
 
     #region Variables
@@ -244,7 +246,7 @@ public class LevelController : MonoBehaviour {
             }
             else {
                 m_oState = STATE.IDLE;
-                if (m_oLevelModel.target <= m_oLevelModel.collected) {
+                if (IsCollectedAllTarget() == true) {
                     m_bIsGameOver = true;
                     OnWinLevel();
                 }
@@ -299,19 +301,39 @@ public class LevelController : MonoBehaviour {
     }
 
     private void OnWinLevel() {
-        PopupFinishLevel.Instance.Show(m_oLevelModel.target);
+        int _nLevel = PlayerPrefs.GetInt("level", 1);
+        int _nUnlockedLevel = PlayerPrefs.GetInt("unlocked_level", 1);
+        _nLevel++;
+        PlayerPrefs.SetInt("level", _nLevel);
+        if (_nLevel > _nUnlockedLevel) {
+            PlayerPrefs.GetInt("unlocked_level", _nLevel);
+        }
+        PopupFinishLevel.Instance.Show(m_oLevelModel.targets);
         SettingsManager.Instance.PlaySound(SoundController.Instance.GetSoundLevelCompleted());
     }
 
     private void OnFailedLevel() {
-        PopupFinishLevel.Instance.Show(m_oLevelModel.target);
+        PopupFinishLevel.Instance.Show(m_oLevelModel.targets);
     }
 
     private void UpdateUI() {
         s_uiLabelMove.text = m_oLevelModel.move.ToString();
-        int _nTargetLeft = m_oLevelModel.target - m_oLevelModel.collected;
-        _nTargetLeft = Mathf.Clamp(_nTargetLeft, 0, m_oLevelModel.target);
-        s_uiLabelTarget.text = _nTargetLeft.ToString();
+
+        ClearChild(s_tfTargetContainer);
+        for (int i = 0; i < m_oLevelModel.targets.Count; i++) {
+            TargetModel _oTargetModel = m_oLevelModel.targets[i];
+            GameObject _goTarget = Instantiate(s_goPrefabTaget, s_tfTargetContainer.position, Quaternion.identity, s_tfTargetContainer);
+            _goTarget.GetComponent<UITargetController>().SetTargetModel(_oTargetModel);
+        }
+    }
+
+    private bool IsCollectedAllTarget() {
+        for (int i = 0; i < m_oLevelModel.targets.Count; i++) {
+            if (m_oLevelModel.targets[i].collected < m_oLevelModel.targets[i].request_amount) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void AffectedAround(List<TileController> p_lMatch) {
@@ -435,8 +457,14 @@ public class LevelController : MonoBehaviour {
         }
     }
 
-    public void OnCollectTarget() {
-        m_oLevelModel.collected++;
+    public void OnCollectTarget(string p_nType, int p_nValue) {
+        for (int i = 0; i < m_oLevelModel.targets.Count; i++) {
+            TargetModel _oTargetModel = m_oLevelModel.targets[i];
+            if (_oTargetModel.type.Equals(p_nType) == true && _oTargetModel.value == p_nValue) {
+                _oTargetModel.collected++;
+                _oTargetModel.collected = Mathf.Clamp(_oTargetModel.collected, 0, _oTargetModel.request_amount);
+            }
+        }
         UpdateUI();
     }
 
@@ -727,6 +755,10 @@ public class LevelController : MonoBehaviour {
 
         ClearChild(s_tfTileContainer);
         s_tfTileContainer.localPosition = new Vector3((1 - m_oLevelModel.size.x) / 2.0f, (1 - m_oLevelModel.size.y) / 2.0f, 0.0f);
+
+        s_tfFieldStable.GetComponent<SpriteRenderer>().sprite = ThemeController.Instance.GetMapStable(m_oLevelModel.map);
+        s_tfFieldMask.GetComponent<SpriteRenderer>().sprite = ThemeController.Instance.GetMapStable(m_oLevelModel.map);
+        s_tfFieldMask.GetComponent<SpriteMask>().sprite = ThemeController.Instance.GetMapStable(m_oLevelModel.map);
 
         m_arTile = new TileController[m_oLevelModel.size.x, m_oLevelModel.size.y];
         for (int x = 0; x < m_oLevelModel.size.x; x++) {
@@ -1284,16 +1316,15 @@ public class LevelController : MonoBehaviour {
                         }
                     }
                 }
-                else {
-                    Vector2Int _v2iRightPosition = new Vector2Int(_v2iPosition.x + 1, _v2iPosition.y);
-                    Vector2Int _v2iDownRightPosition = new Vector2Int(_v2iPosition.x + 1, _v2iPosition.y - 1);
-                    TileController _oRightTile = GetTileAt(_v2iRightPosition);
-                    TileController _oDownRightTile = GetTileAt(_v2iDownRightPosition);
-                    if (_oDownRightTile != null && _oRightTile != null) {
-                        if (_oDownRightTile.IsEmpty() == true) {
-                            if (_oRightTile.IsEmpty() == false && _oRightTile.IsMoveable() == false) {
-                                return _oDownRightTile;
-                            }
+
+                Vector2Int _v2iRightPosition = new Vector2Int(_v2iPosition.x + 1, _v2iPosition.y);
+                Vector2Int _v2iDownRightPosition = new Vector2Int(_v2iPosition.x + 1, _v2iPosition.y - 1);
+                TileController _oRightTile = GetTileAt(_v2iRightPosition);
+                TileController _oDownRightTile = GetTileAt(_v2iDownRightPosition);
+                if (_oDownRightTile != null && _oRightTile != null) {
+                    if (_oDownRightTile.IsEmpty() == true) {
+                        if (_oRightTile.IsEmpty() == false && _oRightTile.IsMoveable() == false) {
+                            return _oDownRightTile;
                         }
                     }
                 }
