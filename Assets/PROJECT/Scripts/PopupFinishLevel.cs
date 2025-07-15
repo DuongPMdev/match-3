@@ -20,18 +20,21 @@ public class PopupFinishLevel : MonoBehaviour {
 
     #region Variables
     private bool m_bIsShowing;
+    private int m_nNumberStar;
     #endregion
 
     #region Functions
     private void Start() {
         m_bIsShowing = false;
+        m_nNumberStar = 0;
     }
 
     public bool IsShowing() {
         return m_bIsShowing;
     }
 
-    public void Show(List<TargetModel> p_lTargetModel) {
+    public void Show(List<TargetModel> p_lTargetModel, int p_nNumberStar) {
+        m_nNumberStar = p_nNumberStar;
         s_oPopupAnimator.gameObject.SetActive(true);
         s_oPopupAnimator.SetBool("bIsShowing", true);
         m_bIsShowing = true;
@@ -40,7 +43,7 @@ public class PopupFinishLevel : MonoBehaviour {
 
     #region OnClickButtons
     public void OnClickButtonContinue() {
-        PopupWinLevel.Instance.Show(3);
+        PopupWinLevel.Instance.Show(m_nNumberStar);
     }
     #endregion
 

@@ -666,6 +666,8 @@ MonoBehaviour:
   s_oSoundExplose: {fileID: 8300000, guid: 7a3e295735591084d8ef28fa1adf3265, type: 3}
   s_oSoundKongMode: {fileID: 8300000, guid: 382187b331dc40b4ea574e632cb05ef9, type: 3}
   s_oSoundBarrelRoll: {fileID: 8300000, guid: da00fa6643cce3a49887856513d37514, type: 3}
+  s_oSoundBreakWoodbox: {fileID: 0}
+  s_oSoundBreakCrystal: {fileID: 0}
 --- !u!1 &583893804
 GameObject:
   m_ObjectHideFlags: 0
@@ -1294,7 +1296,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Ver 1.0.2
+  m_text: Ver 1.0.4
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 12997fadf529aa34a95efddab99092a0, type: 2}
   m_sharedMaterial: {fileID: -4725415680642434012, guid: 12997fadf529aa34a95efddab99092a0, type: 2}

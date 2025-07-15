@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TilePair {
 
@@ -60,6 +61,16 @@ public class LevelController : MonoBehaviour {
     #region Views
     [Header("Views")]
     [SerializeField]
+    private Image s_uiScoreFill;
+    [SerializeField]
+    private TMP_Text s_uiLabelScore;
+    [SerializeField]
+    private GameObject s_goStar1;
+    [SerializeField]
+    private GameObject s_goStar2;
+    [SerializeField]
+    private GameObject s_goStar3;
+    [SerializeField]
     private Transform s_tfFieldMask;
     [SerializeField]
     private Transform s_tfFieldStable;
@@ -90,6 +101,11 @@ public class LevelController : MonoBehaviour {
     private int m_nNumberCreatingItem;
     private int m_nNumberActivingItem;
     private bool m_bIsGameOver;
+    private int m_nScore;
+    private int m_nCombo;
+    private int m_n3StarScore;
+    private int m_n2StarScore;
+    private int m_n1StarScore;
 
     private bool m_bIsUsingBoosterAperoad;
     private bool m_bIsUsingBoosterBananaBomb;
@@ -123,6 +139,11 @@ public class LevelController : MonoBehaviour {
         m_nNumberCreatingItem = 0;
         m_nNumberActivingItem = 0;
         m_bIsGameOver = false;
+        m_nScore = 0;
+        m_nCombo = 0;
+        m_n3StarScore = 4000;
+        m_n2StarScore = 2850;
+        m_n1StarScore = 1800;
 
         m_bIsUsingBoosterAperoad = false;
         m_bIsUsingBoosterBananaBomb = false;
@@ -243,6 +264,7 @@ public class LevelController : MonoBehaviour {
             ResetSpeed();
             if (_lListMatch.Count > 0) {
                 m_oState = STATE.COLLECT;
+                m_nCombo++;
             }
             else {
                 m_oState = STATE.IDLE;
@@ -306,14 +328,24 @@ public class LevelController : MonoBehaviour {
         _nLevel++;
         PlayerPrefs.SetInt("level", _nLevel);
         if (_nLevel > _nUnlockedLevel) {
-            PlayerPrefs.GetInt("unlocked_level", _nLevel);
+            PlayerPrefs.SetInt("unlocked_level", _nLevel);
         }
-        PopupFinishLevel.Instance.Show(m_oLevelModel.targets);
+        int _nNumberStar = 1;
+        if (m_nScore >= m_n3StarScore) {
+            _nNumberStar = 3;
+        }
+        else if (m_nScore >= m_n2StarScore) {
+            _nNumberStar = 2;
+        }
+        else if (m_nScore >= m_n1StarScore) {
+            _nNumberStar = 1;
+        }
+        PopupFinishLevel.Instance.Show(m_oLevelModel.targets, _nNumberStar);
         SettingsManager.Instance.PlaySound(SoundController.Instance.GetSoundLevelCompleted());
     }
 
     private void OnFailedLevel() {
-        PopupFinishLevel.Instance.Show(m_oLevelModel.targets);
+        PopupFinishLevel.Instance.Show(m_oLevelModel.targets, 1);
     }
 
     private void UpdateUI() {
@@ -325,6 +357,14 @@ public class LevelController : MonoBehaviour {
             GameObject _goTarget = Instantiate(s_goPrefabTaget, s_tfTargetContainer.position, Quaternion.identity, s_tfTargetContainer);
             _goTarget.GetComponent<UITargetController>().SetTargetModel(_oTargetModel);
         }
+
+        s_uiLabelScore.text = m_nScore.ToString();
+        float _fFillAmount = m_nScore * 1.0f / m_n3StarScore;
+        _fFillAmount = Mathf.Clamp(_fFillAmount, 0.0f, 1.0f);
+        s_uiScoreFill.fillAmount = _fFillAmount;
+        s_goStar1.SetActive(m_nScore >= m_n1StarScore);
+        s_goStar2.SetActive(m_nScore >= m_n2StarScore);
+        s_goStar3.SetActive(m_nScore >= m_n3StarScore);
     }
 
     private bool IsCollectedAllTarget() {
@@ -352,6 +392,17 @@ public class LevelController : MonoBehaviour {
     }
 
     private void CollectMatch(List<TileController> p_lMatch) {
+        if (m_nCombo > 2) {
+            m_nScore += (int)((50 + (p_lMatch.Count - 3) * 25) * 2.0f);
+        }
+        else if (m_nCombo == 2) {
+            m_nScore += (int)((50 + (p_lMatch.Count - 3) * 25) * 1.5f);
+        }
+        else {
+            m_nScore += 50 + (p_lMatch.Count - 3) * 25;
+        }
+        UpdateUI();
+
         if (p_lMatch.Count > 3) {
             TileController _oMaxCurrentSpeed = GetMaxCurrentSpeed(p_lMatch);
             string _sCreatingItemType = GetCreatingItemType(p_lMatch);
@@ -545,6 +596,7 @@ public class LevelController : MonoBehaviour {
                         _oTile.SwapWith(m_oSelectedTile);
                         m_oSwapingTilePair = new TilePair(_oTile, m_oSelectedTile);
                         m_oState = STATE.SWAP;
+                        m_nCombo = 0;
                         m_oSelectedTile = null;
                     }
                     else {
@@ -652,6 +704,8 @@ public class LevelController : MonoBehaviour {
 
         m_bIsUsingBoosterAperoad = false;
         BoosterController.Instance.OnUseBoosterAperoad();
+        m_nScore += 100;
+        UpdateUI();
     }
 
     public void OnUseBoosterBananaBomb() {
@@ -677,6 +731,8 @@ public class LevelController : MonoBehaviour {
 
         m_bIsUsingBoosterBananaBomb = false;
         BoosterController.Instance.OnUseBoosterBananaBomb();
+        m_nScore += 100;
+        UpdateUI();
     }
 
     public void OnUseBoosterCombo() {
@@ -820,9 +876,13 @@ public class LevelController : MonoBehaviour {
         Vector2Int _v2iPosition = p_oItemModel.position;
         int _nPiece = p_oItemModel.piece;
         if (p_oItemModel.type.Equals("clear_row") == true) {
+            m_nScore += 75;
+            UpdateUI();
             StartCoroutine(ActiveItemClearRowIE(_nPiece, _v2iPosition));
         }
         else if (p_oItemModel.type.Equals("clear_column") == true) {
+            m_nScore += 75;
+            UpdateUI();
             StartCoroutine(ActiveItemClearColumnIE(_nPiece, _v2iPosition));
         }
         else if (p_oItemModel.type.Equals("bomb") == true) {

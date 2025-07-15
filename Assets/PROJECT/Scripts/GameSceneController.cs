@@ -48,6 +48,9 @@ public class GameSceneController : MonoBehaviour {
 
     private void LoadLevel() {
         int _nLevel = PlayerPrefs.GetInt("level", 1);
+        if (_nLevel > 10) {
+            _nLevel = Random.Range(1, 11);
+        }
         TextAsset _oTextAsset = Resources.Load<TextAsset>("Level " + _nLevel);
         if (_oTextAsset != null) {
             string _sJSONData = _oTextAsset.text;

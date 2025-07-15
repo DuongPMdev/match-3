@@ -30,15 +30,19 @@ public class LobbySceneController : MonoBehaviour {
     }
 
     private void LoadDataToUI() {
-        TelegramUser _oTelegramUser = APIController.Instance.GetTelegramUser();
-        if (s_uiLabelDisplayName != null) {
-            s_uiLabelDisplayName.text = _oTelegramUser.first_name + " " + _oTelegramUser.last_name;
-        }
-        if (s_uiLabelHeart != null) {
-            s_uiLabelHeart.text = _oTelegramUser.lives.ToString();
-        }
-        if (s_uiLabelCoin != null) {
-            s_uiLabelCoin.text = _oTelegramUser.coins.ToString();
+        if (APIController.Instance != null) {
+            TelegramUser _oTelegramUser = APIController.Instance.GetTelegramUser();
+            if (_oTelegramUser != null) {
+                if (s_uiLabelDisplayName != null) {
+                    s_uiLabelDisplayName.text = _oTelegramUser.first_name + " " + _oTelegramUser.last_name;
+                }
+                if (s_uiLabelHeart != null) {
+                    s_uiLabelHeart.text = _oTelegramUser.lives.ToString();
+                }
+                if (s_uiLabelCoin != null) {
+                    s_uiLabelCoin.text = _oTelegramUser.coins.ToString();
+                }
+            }
         }
 
     }
