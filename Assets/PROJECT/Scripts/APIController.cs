@@ -125,6 +125,7 @@ public class APIController : MonoBehaviour {
     #region Functions
     private void Start() {
         m_sSessionToken = PlayerPrefs.GetString("SessionToken", "");
+        IntroSceneController.Instance.OnLoadedUserData();
         if (string.IsNullOrEmpty(m_sSessionToken) == false) {
             GetUserStats();
             GetUserProfile();
@@ -220,7 +221,6 @@ public class APIController : MonoBehaviour {
             Debug.Log(json);
             ProfileResponse _oProfileResponse = JsonUtility.FromJson<ProfileResponse>(json);
             m_oTelegramUser = _oProfileResponse.data.user;
-            IntroSceneController.Instance.OnLoadedUserData();
         }
         else {
             TelegramAuth();
