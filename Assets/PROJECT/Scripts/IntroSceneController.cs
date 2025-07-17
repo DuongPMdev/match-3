@@ -20,7 +20,7 @@ public class IntroSceneController : MonoBehaviour {
 
     #region Functions
     private void Start() {
-        s_goButtonPlay.SetActive(false);
+        s_goButtonPlay.SetActive(true);
     }
 
     public void OnLoadedUserData() {

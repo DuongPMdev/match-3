@@ -89,3 +89,62 @@ public class ObstacleModel {
     }
 
 }
+
+
+
+[Serializable]
+public class UserModel {
+
+    public int heart;
+    public string add_heart_anchor;
+    public int checkin_count;
+    public string checkin_anchor;
+    public int coin;
+    public int booster_1;
+    public int booster_2;
+    public int booster_3;
+    public int booster_4;
+    public int max_level;
+    public List<MissionProceedModel> mission_proceed;
+
+    public UserModel() {
+        heart = 5;
+        add_heart_anchor = DateTime.UtcNow.ToBinary().ToString();
+        checkin_count = 0;
+        checkin_anchor = "";
+        coin = 0;
+        max_level = 1;
+        booster_1 = 0;
+        booster_2 = 0;
+        booster_3 = 0;
+        booster_4 = 0;
+        mission_proceed = new List<MissionProceedModel>();
+    }
+
+}
+
+[Serializable]
+public class MissionConfigModel {
+
+    public string mission_id;
+    public string icon;
+    public string description;
+    public int request;
+    public int coin_reward;
+
+}
+
+[Serializable]
+public class MissionProceedModel {
+
+    public string mission_id;
+    public int proceeded;
+    public bool rewarded;
+
+    public MissionProceedModel(string p_sMissionID) {
+        mission_id = p_sMissionID;
+        proceeded = 0;
+        rewarded = false;
+    }
+
+}

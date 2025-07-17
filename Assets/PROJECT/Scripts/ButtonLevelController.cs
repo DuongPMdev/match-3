@@ -41,6 +41,7 @@ public class ButtonLevelController : MonoBehaviour {
         s_uiLabelLevel.text = m_nLevel.ToString();
 
         int _nUnlockedLevel = PlayerPrefs.GetInt("unlocked_level", 1);
+        _nUnlockedLevel = PlayerPrefsController.Instance.GetUserModel().max_level;
         if (m_nLevel < _nUnlockedLevel) {
             s_uiLabelLevel.font = s_oFontActive;
             s_uiLabelLevel.color = s_oMapOnLabelColor;

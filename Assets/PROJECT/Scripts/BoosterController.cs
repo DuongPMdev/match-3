@@ -30,7 +30,11 @@ public class BoosterController : MonoBehaviour {
 
     #region Functions
     private void LoadVariables() {
-        m_lNumberBooster = new List<int>() { 3, 3, 3, 3, 0 };
+        m_lNumberBooster = new List<int>() { 0, 0, 0, 0, 0 };
+        m_lNumberBooster[0] = PlayerPrefsController.Instance.GetUserModel().booster_1;
+        m_lNumberBooster[1] = PlayerPrefsController.Instance.GetUserModel().booster_2;
+        m_lNumberBooster[2] = PlayerPrefsController.Instance.GetUserModel().booster_3;
+        m_lNumberBooster[3] = PlayerPrefsController.Instance.GetUserModel().booster_4;
     }
     private void Start() {
         LoadUI();

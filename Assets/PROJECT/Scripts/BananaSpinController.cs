@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class BananaSpinController : MonoBehaviour {
@@ -16,6 +18,12 @@ public class BananaSpinController : MonoBehaviour {
     [Header("Views")]
     [SerializeField]
     private Transform s_tfRotor;
+    [SerializeField]
+    private GameObject s_goButtonSpin;
+    [SerializeField]
+    private GameObject s_goButtonWait;
+    [SerializeField]
+    private TMP_Text s_goLabelWait;
     [SerializeField]
     private GameObject s_goBananaSpinLocker;
     #endregion
@@ -48,9 +56,37 @@ public class BananaSpinController : MonoBehaviour {
         m_fThreshold = Mathf.Min(5.0f, m_fPartRange / 4.0f);
     }
 
+    private void Update() {
+        string _sSpinTime = PlayerPrefs.GetString("SpinTime", "");
+        DateTime _oSpinTime = DateTime.UtcNow;
+        if (string.IsNullOrEmpty(_sSpinTime) == false) {
+            _oSpinTime = DateTime.FromBinary(Convert.ToInt64(_sSpinTime));
+        }
+        TimeSpan _oTimeSpan = _oSpinTime - DateTime.UtcNow;
+
+        if (_oTimeSpan.TotalSeconds <= 0) {
+            s_goButtonSpin.SetActive(true);
+            s_goButtonWait.SetActive(false);
+        }
+        else {
+            s_goButtonSpin.SetActive(false);
+            s_goButtonWait.SetActive(true);
+            s_goLabelWait.text = "TRY IN " + string.Format("{0:D2}:{1:D2}:{2:D2}",
+                _oTimeSpan.Hours + _oTimeSpan.Days * 24,
+                _oTimeSpan.Minutes,
+                _oTimeSpan.Seconds);
+        }
+    }
+
     public void Spin() {
+        DateTime _oNow = DateTime.UtcNow;
+        DateTime _oSpinTime = _oNow.AddHours(8);
+        PlayerPrefs.SetString("SpinTime", _oSpinTime.ToBinary().ToString());
+        PlayerPrefs.Save();
+
         m_fSpinCurrentSpeed = m_fSpinStartSpeed;
-        StartCoroutine(SpinIE(2));
+        int _nTarget = UnityEngine.Random.Range(0, int.MaxValue) % 4 + 1;
+        StartCoroutine(SpinIE(_nTarget));
     }
 
     private IEnumerator SpinIE(int p_nTarget) {
@@ -76,7 +112,7 @@ public class BananaSpinController : MonoBehaviour {
 
         float _fMinTargetStopAngle = p_nTarget * m_fPartRange + m_fThreshold;
         float _fMaxTargetStopAngle = (p_nTarget + 1) * m_fPartRange - m_fThreshold;
-        float _fTargetStopAngle = Random.Range(_fMinTargetStopAngle, _fMaxTargetStopAngle);
+        float _fTargetStopAngle = UnityEngine.Random.Range(_fMinTargetStopAngle, _fMaxTargetStopAngle);
         float _fTargetStartDecelAngle = (360f - _fTargetStopAngle + m_fDecelDistance) % 360f;
 
         while (Mathf.Abs(Mathf.DeltaAngle(_fCurrentRotateZ, _fTargetStartDecelAngle)) > m_fThreshold) {
@@ -105,7 +141,7 @@ public class BananaSpinController : MonoBehaviour {
             yield return null;
         }
         yield return new WaitForSeconds(0.5f);
-        PopupBananaSpinController.Instance.Show();
+        PopupBananaSpinController.Instance.Show(p_nTarget);
 
         s_goBananaSpinLocker.SetActive(false);
         m_bIsSpinning = false;

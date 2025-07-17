@@ -21,6 +21,10 @@ public class LobbySceneController : MonoBehaviour {
     private TMP_Text s_uiLabelHeart;
     [SerializeField]
     private TMP_Text s_uiLabelCoin;
+    [SerializeField]
+    private GameObject s_goPopupBuySuccessed;
+    [SerializeField]
+    private GameObject s_goPopupNotEnoughCoin;
     #endregion
 
     #region Functions
@@ -44,7 +48,10 @@ public class LobbySceneController : MonoBehaviour {
                 }
             }
         }
-
+        else {
+            s_uiLabelHeart.text = PlayerPrefsController.Instance.GetUserModel().heart.ToString();
+            s_uiLabelCoin.text = PlayerPrefsController.Instance.GetUserModel().coin.ToString();
+        }
     }
 
     public void HideAllPopup() {
@@ -53,6 +60,10 @@ public class LobbySceneController : MonoBehaviour {
         PopupHeartController.Instance.Hide();
         PopupLevelInfoController.Instance.Hide();
         PopupBananaSpinController.Instance.Hide();
+    }
+
+    public void UpdateCoin() {
+        s_uiLabelCoin.text = PlayerPrefsController.Instance.GetUserModel().coin.ToString();
     }
     #endregion
 
@@ -75,6 +86,36 @@ public class LobbySceneController : MonoBehaviour {
 
     public void OnClickButtonDailyReward() {
         PopupDailyRewardController.Instance.Show();
+    }
+
+    public void OnClickButtonBuyBooster1() {
+        if (PlayerPrefsController.Instance.GetUserModel().coin < 100) {
+            s_goPopupNotEnoughCoin.SetActive(true);
+        }
+        else {
+            PlayerPrefsController.Instance.BuyBooster1(100, 3);
+            s_goPopupBuySuccessed.SetActive(true);
+        }
+    }
+
+    public void OnClickButtonBuyBooster2() {
+        if (PlayerPrefsController.Instance.GetUserModel().coin < 150) {
+            s_goPopupNotEnoughCoin.SetActive(true);
+        }
+        else {
+            PlayerPrefsController.Instance.BuyBooster1(150, 3);
+            s_goPopupBuySuccessed.SetActive(true);
+        }
+    }
+
+    public void OnClickButtonBuyBooster3() {
+        if (PlayerPrefsController.Instance.GetUserModel().coin < 200) {
+            s_goPopupNotEnoughCoin.SetActive(true);
+        }
+        else {
+            PlayerPrefsController.Instance.BuyBooster1(200, 3);
+            s_goPopupBuySuccessed.SetActive(true);
+        }
     }
     #endregion
 

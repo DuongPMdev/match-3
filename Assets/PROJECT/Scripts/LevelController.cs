@@ -324,11 +324,11 @@ public class LevelController : MonoBehaviour {
 
     private void OnWinLevel() {
         int _nLevel = PlayerPrefs.GetInt("level", 1);
-        int _nUnlockedLevel = PlayerPrefs.GetInt("unlocked_level", 1);
+        int _nUnlockedLevel = PlayerPrefsController.Instance.GetUserModel().max_level;
         _nLevel++;
         PlayerPrefs.SetInt("level", _nLevel);
         if (_nLevel > _nUnlockedLevel) {
-            PlayerPrefs.SetInt("unlocked_level", _nLevel);
+            PlayerPrefsController.Instance.SetMaxLevel(_nLevel);
         }
         int _nNumberStar = 1;
         if (m_nScore >= m_n3StarScore) {
