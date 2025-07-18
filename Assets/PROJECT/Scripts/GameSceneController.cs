@@ -48,8 +48,8 @@ public class GameSceneController : MonoBehaviour {
 
     private void LoadLevel() {
         int _nLevel = PlayerPrefs.GetInt("level", 1);
-        if (_nLevel > 100) {
-            _nLevel = Random.Range(1, 101);
+        if (_nLevel > 36) {
+            _nLevel = Random.Range(0, int.MaxValue) % 36 + 1;
         }
         TextAsset _oTextAsset = Resources.Load<TextAsset>("Level " + _nLevel);
         if (_oTextAsset != null) {

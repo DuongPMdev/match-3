@@ -384,6 +384,9 @@ public class TileController : MonoBehaviour {
             if (m_oObstacle.GetObstacleModel().type.Equals(ObstacleTypes.WOODBOX) == true) {
                 m_oObstacle.TakeDamage(1);
             }
+            else if(m_oObstacle.GetObstacleModel().type.Equals(ObstacleTypes.WOODBOX_HARD) == true) {
+                m_oObstacle.TakeDamage(1);
+            }
             else if (m_oObstacle.GetObstacleModel().type.Equals(ObstacleTypes.BUSH) == true) {
                 m_oObstacle.TakeDamage(1);
             }

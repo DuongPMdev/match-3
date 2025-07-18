@@ -258,7 +258,7 @@ public class LevelController : MonoBehaviour {
             List<List<TileController>> _lListMatch = GetAllMergedMatch();
             for (int i = 0; i < _lListMatch.Count; i++) {
                 List<TileController> _lMatch = _lListMatch[i];
-                AffectedAround(_lMatch);
+                //AffectedAround(_lMatch);
                 CollectMatch(_lMatch);
             }
             ResetSpeed();
@@ -340,12 +340,13 @@ public class LevelController : MonoBehaviour {
         else if (m_nScore >= m_n1StarScore) {
             _nNumberStar = 1;
         }
-        PopupFinishLevel.Instance.Show(m_oLevelModel.targets, _nNumberStar);
+        PopupFinishLevel.Instance.Show(m_oLevelModel.targets, _nNumberStar, _nLevel);
         SettingsManager.Instance.PlaySound(SoundController.Instance.GetSoundLevelCompleted());
     }
 
     private void OnFailedLevel() {
-        PopupFinishLevel.Instance.Show(m_oLevelModel.targets, 1);
+        int _nLevel = PlayerPrefs.GetInt("level", 1);
+        PopupFinishLevel.Instance.Show(m_oLevelModel.targets, 1, _nLevel);
     }
 
     private void UpdateUI() {

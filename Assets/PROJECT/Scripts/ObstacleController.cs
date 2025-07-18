@@ -83,7 +83,7 @@ public class ObstacleController : MonoBehaviour {
         }
         else if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX_HARD) == true) {
             s_goWoodboxHard.gameObject.SetActive(true);
-            m_nHealth = 1;
+            m_nHealth = 2;
         }
         else if (m_oObstacleModel.type.Equals(ObstacleTypes.BUSH) == true) {
             s_goBush.gameObject.SetActive(true);
@@ -210,19 +210,19 @@ public class ObstacleController : MonoBehaviour {
         if (m_oObstacleModel.type.Equals(ObstacleTypes.LOCKER) == true) {
             TakeDamage(1);
         }
-        if (m_oObstacleModel.type.Equals(ObstacleTypes.BUSH) == true) {
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.BUSH) == true) {
             TakeDamage(1);
         }
-        if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX) == true) {
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX) == true) {
             TakeDamage(1);
         }
-        if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX_HARD) == true) {
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX_HARD) == true) {
             TakeDamage(1);
         }
-        if (m_oObstacleModel.type.Equals(ObstacleTypes.BLUE_CRYSTAL) == true) {
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.BLUE_CRYSTAL) == true) {
             TakeDamage(1);
         }
-        if (m_oObstacleModel.type.Equals(ObstacleTypes.RED_CRYSTAL) == true) {
+        else if (m_oObstacleModel.type.Equals(ObstacleTypes.RED_CRYSTAL) == true) {
             TakeDamage(1);
         }
     }
@@ -265,6 +265,7 @@ public class ObstacleController : MonoBehaviour {
             s_goCrack.SetActive(false);
             s_goLocker.SetActive(false);
             s_goWoodbox.SetActive(false);
+            s_goWoodboxHard.SetActive(false);
             s_goBush.SetActive(false);
             s_goBlueCrystal.SetActive(false);
             s_goRedCrystal.SetActive(false);

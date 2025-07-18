@@ -94,6 +94,9 @@ public class ToolSceneController : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.W) == true) {
             OnClickButtonSetInitObstacle(ObstacleTypes.WOODBOX);
         }
+        if (Input.GetKeyDown(KeyCode.R) == true) {
+            OnClickButtonSetInitObstacle(ObstacleTypes.WOODBOX_HARD);
+        }
     }
 
     private void LoadLevel(int p_nLevel) {
@@ -271,6 +274,9 @@ public class ToolSceneController : MonoBehaviour {
                     if (_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX) == true) {
                         continue;
                     }
+                    if (_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX_HARD) == true) {
+                        continue;
+                    }
                     if (_oObstacleModel.type.Equals(ObstacleTypes.BUSH) == true) {
                         continue;
                     }
@@ -363,6 +369,9 @@ public class ToolSceneController : MonoBehaviour {
         s_uiInputFieldLevelModelSizeY.text = m_oLevelModel.size.y.ToString();
         s_uiInputFieldLevelModelMove.text = m_oLevelModel.move.ToString();
         s_uiInputFieldLevelModelMap.text = m_oLevelModel.map.ToString();
+
+        m_oLevelModel.targets.Clear();
+        m_oLevelModel.targets.Add(new TargetModel("piece", 1, 10));
 
         s_uiMapStable.sprite = ThemeController.Instance.GetMapStable(m_oLevelModel.map);
 

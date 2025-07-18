@@ -18,6 +18,8 @@ public class ToolObstacleController : MonoBehaviour {
     [SerializeField]
     private GameObject s_goWoodbox;
     [SerializeField]
+    private GameObject s_goWoodboxHard;
+    [SerializeField]
     private GameObject s_goBush;
     [SerializeField]
     private GameObject s_goBlueCrystal;
@@ -32,6 +34,9 @@ public class ToolObstacleController : MonoBehaviour {
         }
         else if (p_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX) == true) {
             s_goWoodbox.gameObject.SetActive(true);
+        }
+        else if (p_oObstacleModel.type.Equals(ObstacleTypes.WOODBOX_HARD) == true) {
+            s_goWoodboxHard.gameObject.SetActive(true);
         }
         else if (p_oObstacleModel.type.Equals(ObstacleTypes.BUSH) == true) {
             s_goBush.gameObject.SetActive(true);

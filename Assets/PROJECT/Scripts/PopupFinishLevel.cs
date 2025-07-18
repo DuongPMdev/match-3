@@ -16,6 +16,8 @@ public class PopupFinishLevel : MonoBehaviour {
     [Header("Views")]
     [SerializeField]
     private Animator s_oPopupAnimator;
+    [SerializeField]
+    private TMP_Text s_uiLabelLevel;
     #endregion
 
     #region Variables
@@ -33,7 +35,8 @@ public class PopupFinishLevel : MonoBehaviour {
         return m_bIsShowing;
     }
 
-    public void Show(List<TargetModel> p_lTargetModel, int p_nNumberStar) {
+    public void Show(List<TargetModel> p_lTargetModel, int p_nNumberStar, int p_nLevel) {
+        s_uiLabelLevel.text = "LEVEL " + p_nLevel.ToString();
         m_nNumberStar = p_nNumberStar;
         s_oPopupAnimator.gameObject.SetActive(true);
         s_oPopupAnimator.SetBool("bIsShowing", true);

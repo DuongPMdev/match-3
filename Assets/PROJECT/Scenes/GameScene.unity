@@ -4964,8 +4964,8 @@ MonoBehaviour:
   - g_lMapStable:
     - {fileID: 21300000, guid: 054295b260e39b14a8c11bf3dceb46a1, type: 3}
     - {fileID: 21300000, guid: 054295b260e39b14a8c11bf3dceb46a1, type: 3}
-    - {fileID: 21300000, guid: 6499a56f30812094ca24e9a048a3b4ce, type: 3}
     - {fileID: 21300000, guid: e7ebfb982bd89b94b8dc7dd1e9ebea9c, type: 3}
+    - {fileID: 21300000, guid: 6499a56f30812094ca24e9a048a3b4ce, type: 3}
     - {fileID: 21300000, guid: c7707830928803541b5b9c4594d44763, type: 3}
     g_lPieceSprite:
     - {fileID: 87268947, guid: 6cf8a9836ff61c6458cc0c81a4c580de, type: 3}
@@ -11222,7 +11222,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1495161982
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12439,6 +12439,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   s_oPopupAnimator: {fileID: 490434011}
+  s_uiLabelLevel: {fileID: 1413571362}
 --- !u!1 &1598188150
 GameObject:
   m_ObjectHideFlags: 0
